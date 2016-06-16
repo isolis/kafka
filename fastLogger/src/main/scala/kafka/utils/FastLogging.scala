@@ -20,13 +20,12 @@ package kafka.utils
 import org.apache.log4j.Logger
 
 import scala.language.experimental.macros
-import scala.reflect.macros.Context
+import scala.reflect.macros.whitebox.Context
 
   object MacroLogger {
-    def info(c: Context)(msg: c.Expr[String]): c.Expr[Unit] = {
+    def info(c: Context)(msg: c.Expr[String]) = {
       import c.universe._
       q"if (Logger.isInfoEnabled()) Logger.info(msgWithLogIdent($msg))"
-      //Expr(If(Apply(Select(Select(Ident(TermName("$anon")), TermName("logger")), TermName("isInfoEnabled")), List()), Apply(Select(Select(Ident(TermName("$anon")), TermName("logger")), TermName("info")), List(Select(Ident(TermName("$anon")), TermName("msg")))), Literal(Constant(()))))
     }
   }
 
@@ -35,6 +34,19 @@ trait FastLogging {
   lazy val logger = Logger.getLogger(loggerName)
 
   protected var logIdent: String = null
+
+  /**
+    * Do the given action and log any exceptions thrown without rethrowing them
+    * @param log The log method to use for logging. E.g. logger.warn
+    * @param action The action to execute
+    */
+  def swallow(log: (Object, Throwable) => Unit, action: => Unit) {
+    try {
+      action
+    } catch {
+      case e: Throwable => log(e.getMessage(), e)
+    }
+  }
 
   // Force initialization to register Log4jControllerMBean
   private val log4jController = Log4jController
@@ -55,7 +67,7 @@ trait FastLogging {
       logger.trace(msgWithLogIdent(msg),e)
   }
   def swallowTrace(action: => Unit) {
-    CoreUtilsFastLogger.swallow(logger.trace, action)
+    swallow(logger.trace, action)
   }
 
   def debug(msg: => String): Unit = {
@@ -71,7 +83,7 @@ trait FastLogging {
       logger.debug(msgWithLogIdent(msg),e)
   }
   def swallowDebug(action: => Unit) {
-    CoreUtilsFastLogger.swallow(logger.debug, action)
+    swallow(logger.debug, action)
   }
 
   def info(msg: String): Unit = macro MacroLogger.info
@@ -90,7 +102,7 @@ trait FastLogging {
       logger.info(msgWithLogIdent(msg),e)
   }
   def swallowInfo(action: => Unit) {
-    CoreUtilsFastLogger.swallow(logger.info, action)
+    swallow(logger.info, action)
   }
 
   def warn(msg: => String): Unit = {
@@ -103,7 +115,7 @@ trait FastLogging {
     logger.warn(msgWithLogIdent(msg),e)
   }
   def swallowWarn(action: => Unit) {
-    CoreUtilsFastLogger.swallow(logger.warn, action)
+    swallow(logger.warn, action)
   }
   def swallow(action: => Unit) = swallowWarn(action)
 
@@ -117,7 +129,7 @@ trait FastLogging {
     logger.error(msgWithLogIdent(msg),e)
   }
   def swallowError(action: => Unit) {
-    CoreUtilsFastLogger.swallow(logger.error, action)
+    swallow(logger.error, action)
   }
 
   def fatal(msg: => String): Unit = {

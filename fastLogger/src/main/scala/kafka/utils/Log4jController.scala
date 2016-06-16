@@ -17,8 +17,10 @@
 
 package kafka.utils
 
+import java.lang.management.ManagementFactory
 import java.util
 import java.util.Locale
+import javax.management._
 
 import org.apache.log4j.{Level, LogManager, Logger}
 
@@ -27,7 +29,35 @@ object Log4jController {
 
   private val controller = new Log4jController
 
-  CoreUtilsFastLogger.registerMBean(controller, "kafka:type=kafka.Log4jController")
+  /**
+    * Register the given mbean with the platform mbean server,
+    * unregistering any mbean that was there before. Note,
+    * this method will not throw an exception if the registration
+    * fails (since there is nothing you can do and it isn't fatal),
+    * instead it just returns false indicating the registration failed.
+    * @param mbean The object to register as an mbean
+    * @param name The name to register this mbean with
+    * @return true if the registration succeeded
+    */
+  def registerMBean(mbean: Object, name: String): Boolean = {
+    try {
+      val mbs = ManagementFactory.getPlatformMBeanServer()
+      mbs synchronized {
+        val objName = new ObjectName(name)
+        if(mbs.isRegistered(objName))
+          mbs.unregisterMBean(objName)
+        mbs.registerMBean(mbean, objName)
+        true
+      }
+    } catch {
+      case e: Exception => {
+        //error("Failed to register Mbean " + name, e)
+        false
+      }
+    }
+  }
+
+  registerMBean(controller, "kafka:type=kafka.Log4jController")
 
 }
 

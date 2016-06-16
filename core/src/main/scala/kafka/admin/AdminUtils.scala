@@ -39,7 +39,7 @@ import collection.Map
 import collection.Set
 import org.I0Itec.zkclient.exception.ZkNodeExistsException
 
-object AdminUtils extends FastLogging {
+object AdminUtils extends Logging {
   val rand = new Random
   val AdminClientId = "__admin_client"
   val EntityConfigChangeZnodePrefix = "config_change_"
