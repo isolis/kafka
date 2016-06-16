@@ -22,16 +22,17 @@ import org.apache.log4j.Logger
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox.Context
 
-  object MacroLogger {
-    def info(c: Context)(msg: c.Expr[String]) = {
-      import c.universe._
-      q"if (Logger.isInfoEnabled()) Logger.info(msgWithLogIdent($msg))"
-    }
+object MacroLogger {
+  def info(c: Context)(msg: c.Expr[String]) = {
+    import c.universe._
+    q"if (logger.isInfoEnabled()) logger.info(msgWithLogIdent($msg))"
   }
+}
+
 
 trait FastLogging {
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  val logger = Logger.getLogger(loggerName)
 
   protected var logIdent: String = null
 
@@ -48,10 +49,12 @@ trait FastLogging {
     }
   }
 
+
+
   // Force initialization to register Log4jControllerMBean
   private val log4jController = Log4jController
 
-  private def msgWithLogIdent(msg: String) =
+  protected def msgWithLogIdent(msg: String) =
     if(logIdent == null) msg else logIdent + msg
 
   def trace(msg: => String): Unit = {
