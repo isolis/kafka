@@ -18,6 +18,16 @@
 package kafka.utils
 
 import org.apache.log4j.Logger
+import scala.reflect.macros.Context
+import scala.language.experimental.macros
+
+  object MacroLogger {
+    def info(c: Context)(msg: c.Expr[String]): c.Expr[Unit] = {
+      import c.universe._
+      //q"if (Logger.isInfoEnabled()) Logger.info(msgWithLogIdent($msg))"
+      Expr(If(Apply(Select(Select(Ident(TermName("$anon")), TermName("logger")), TermName("isInfoEnabled")), List()), Apply(Select(Select(Ident(TermName("$anon")), TermName("logger")), TermName("info")), List(Select(Ident(TermName("$anon")), TermName("msg")))), Literal(Constant(()))))
+    }
+  }
 
 trait Logging {
   val loggerName = this.getClass.getName
@@ -28,7 +38,7 @@ trait Logging {
   // Force initialization to register Log4jControllerMBean
   private val log4jController = Log4jController
 
-  private def msgWithLogIdent(msg: String) = 
+  private def msgWithLogIdent(msg: String) =
     if(logIdent == null) msg else logIdent + msg
 
   def trace(msg: => String): Unit = {
@@ -63,10 +73,13 @@ trait Logging {
     CoreUtils.swallow(logger.debug, action)
   }
 
-  def info(msg: => String): Unit = {
+  def info(msg: String): Unit = macro MacroLogger.info
+
+  def infoOld(msg: => String): Unit = {
     if (logger.isInfoEnabled())
       logger.info(msgWithLogIdent(msg))
   }
+
   def info(e: => Throwable): Any = {
     if (logger.isInfoEnabled())
       logger.info(logIdent,e)
@@ -95,7 +108,7 @@ trait Logging {
 
   def error(msg: => String): Unit = {
     logger.error(msgWithLogIdent(msg))
-  }		
+  }
   def error(e: => Throwable): Any = {
     logger.error(logIdent,e)
   }
@@ -111,7 +124,7 @@ trait Logging {
   }
   def fatal(e: => Throwable): Any = {
     logger.fatal(logIdent,e)
-  }	
+  }
   def fatal(msg: => String, e: => Throwable) = {
     logger.fatal(msgWithLogIdent(msg),e)
   }
