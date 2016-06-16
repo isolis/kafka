@@ -18,7 +18,7 @@ import org.apache.kafka.clients.producer.{ProducerConfig, ProducerRecord}
 import org.apache.kafka.common.record.TimestampType
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.{PartitionInfo, TopicPartition}
-import kafka.utils.{TestUtils, Logging, ShutdownableThread}
+import kafka.utils.{TestUtils, FastLogging, ShutdownableThread}
 import kafka.server.KafkaConfig
 import java.util.ArrayList
 import org.junit.Assert._
@@ -31,7 +31,7 @@ import org.apache.kafka.clients.producer.KafkaProducer
 /**
  * Integration tests for the new consumer that cover basic usage as well as server failures
  */
-abstract class BaseConsumerTest extends IntegrationTestHarness with Logging {
+abstract class BaseConsumerTest extends IntegrationTestHarness with FastLogging {
 
   val producerCount = 1
   val consumerCount = 2
@@ -380,6 +380,7 @@ abstract class BaseConsumerTest extends IntegrationTestHarness with Logging {
      *
      * This method does not allow to change subscription until doWork processes the previous call
      * to this method. This is just to avoid race conditions and enough functionality for testing purposes
+ *
      * @param newTopicsToSubscribe
      */
     def subscribe(newTopicsToSubscribe: List[String]): Unit = {

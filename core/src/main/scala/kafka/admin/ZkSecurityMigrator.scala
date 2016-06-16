@@ -21,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 import joptsimple.OptionParser
 import org.I0Itec.zkclient.exception.ZkException
-import kafka.utils.{CommandLineUtils, Logging, ZkUtils}
+import kafka.utils.{CommandLineUtils, FastLogging, ZkUtils}
 import org.apache.kafka.common.security.JaasUtils
 import org.apache.zookeeper.AsyncCallback.{ChildrenCallback, StatCallback}
 import org.apache.zookeeper.data.Stat
@@ -35,21 +35,21 @@ import scala.concurrent._
 import scala.concurrent.duration._
 
 /**
- * This tool is to be used when making access to ZooKeeper authenticated or 
+ * This tool is to be used when making access to ZooKeeper authenticated or
  * the other way around, when removing authenticated access. The exact steps
  * to migrate a Kafka cluster from unsecure to secure with respect to ZooKeeper
  * access are the following:
- * 
+ *
  * 1- Perform a rolling upgrade of Kafka servers, setting zookeeper.set.acl to false
- * and passing a valid JAAS login file via the system property 
+ * and passing a valid JAAS login file via the system property
  * java.security.auth.login.config
  * 2- Perform a second rolling upgrade keeping the system property for the login file
  * and now setting zookeeper.set.acl to true
- * 3- Finally run this tool. There is a script under ./bin. Run 
+ * 3- Finally run this tool. There is a script under ./bin. Run
  *   ./bin/zookeeper-security-migration --help
  * to see the configuration parameters. An example of running it is the following:
  *  ./bin/zookeeper-security-migration --zookeeper.acl=secure --zookeeper.connection=localhost:2181
- * 
+ *
  * To convert a cluster from secure to unsecure, we need to perform the following
  * steps:
  * 1- Perform a rolling upgrade setting zookeeper.set.acl to false for each server
@@ -58,7 +58,7 @@ import scala.concurrent.duration._
  * login file (java.security.auth.login.config).
  */
 
-object ZkSecurityMigrator extends Logging {
+object ZkSecurityMigrator extends FastLogging {
   val usageMessage = ("ZooKeeper Migration Tool Help. This tool updates the ACLs of "
                       + "znodes as part of the process of setting up ZooKeeper "
                       + "authentication.")
@@ -91,7 +91,7 @@ object ZkSecurityMigrator extends Logging {
     if (!JaasUtils.isZkSecurityEnabled()) {
       val errorMsg = "Security isn't enabled, most likely the file isn't set properly: %s".format(jaasFile)
       System.out.println("ERROR: %s".format(errorMsg))
-      throw new IllegalArgumentException("Incorrect configuration") 
+      throw new IllegalArgumentException("Incorrect configuration")
     }
 
     val zkAcl: Boolean = options.valueOf(zkAclOpt) match {
@@ -122,7 +122,7 @@ object ZkSecurityMigrator extends Logging {
   }
 }
 
-class ZkSecurityMigrator(zkUtils: ZkUtils) extends Logging {
+class ZkSecurityMigrator(zkUtils: ZkUtils) extends FastLogging {
   private val workQueue = new LinkedBlockingQueue[Runnable]
   private val futures = new Queue[Future[String]]
 
@@ -226,10 +226,10 @@ class ZkSecurityMigrator(zkUtils: ZkUtils) extends Logging {
         zkUtils.makeSurePersistentPathExists(path)
         setAclsRecursively(path)
       }
-      
+
       @tailrec
       def recurse(): Unit = {
-        val future = futures.synchronized { 
+        val future = futures.synchronized {
           futures.headOption
         }
         future match {

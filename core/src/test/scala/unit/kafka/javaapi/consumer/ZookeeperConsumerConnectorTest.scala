@@ -25,7 +25,7 @@ import kafka.integration.KafkaServerTestHarness
 import kafka.producer.KeyedMessage
 import kafka.javaapi.producer.Producer
 import kafka.utils.IntEncoder
-import kafka.utils.{Logging, TestUtils}
+import kafka.utils.{FastLogging, TestUtils}
 import kafka.consumer.{KafkaStream, ConsumerConfig}
 import kafka.zk.ZooKeeperTestHarness
 import kafka.common.MessageStreamsExistException
@@ -37,7 +37,7 @@ import org.apache.log4j.{Level, Logger}
 import org.junit.Assert._
 
 @deprecated("This test has been deprecated and it will be removed in a future release", "0.10.0.0")
-class ZookeeperConsumerConnectorTest extends KafkaServerTestHarness with Logging {
+class ZookeeperConsumerConnectorTest extends KafkaServerTestHarness with FastLogging {
   val numNodes = 2
   val numParts = 2
   val topic = "topic1"

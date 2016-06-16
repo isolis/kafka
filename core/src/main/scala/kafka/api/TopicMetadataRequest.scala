@@ -22,12 +22,12 @@ import java.nio.ByteBuffer
 import kafka.api.ApiUtils._
 import kafka.network.{RequestOrResponseSend, RequestChannel}
 import kafka.network.RequestChannel.Response
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.protocol.{ApiKeys, Errors}
 
 import scala.collection.mutable.ListBuffer
 
-object TopicMetadataRequest extends Logging {
+object TopicMetadataRequest extends FastLogging {
   val CurrentVersion = 0.shortValue
   val DefaultClientId = ""
 }

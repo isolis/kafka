@@ -26,14 +26,14 @@ import java.io.File
 import com.yammer.metrics.reporting.CsvReporter
 import java.util.concurrent.TimeUnit
 
-import kafka.utils.{Logging, VerifiableProperties}
+import kafka.utils.{FastLogging, VerifiableProperties}
 import org.apache.kafka.common.utils.Utils
 
 private trait KafkaCSVMetricsReporterMBean extends KafkaMetricsReporterMBean
 
 private class KafkaCSVMetricsReporter extends KafkaMetricsReporter
                               with KafkaCSVMetricsReporterMBean
-                              with Logging {
+                              with FastLogging {
 
   private var csvDir: File = null
   private var underlying: CsvReporter = null

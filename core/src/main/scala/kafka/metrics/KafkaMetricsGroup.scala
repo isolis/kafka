@@ -24,16 +24,17 @@ import com.yammer.metrics.Metrics
 import com.yammer.metrics.core.{Gauge, MetricName}
 import kafka.consumer.{ConsumerTopicStatsRegistry, FetchRequestAndResponseStatsRegistry}
 import kafka.producer.{ProducerRequestStatsRegistry, ProducerStatsRegistry, ProducerTopicStatsRegistry}
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 
 import scala.collection.immutable
 
 
-trait KafkaMetricsGroup extends Logging {
+trait KafkaMetricsGroup extends FastLogging {
 
   /**
    * Creates a new MetricName object for gauges, meters, etc. created for this
    * metrics group.
+ *
    * @param name Descriptive name of the metric.
    * @param tags Additional attributes which mBean will have.
    * @return Sanitized metric name object.
@@ -90,7 +91,7 @@ trait KafkaMetricsGroup extends Logging {
 
 }
 
-object KafkaMetricsGroup extends KafkaMetricsGroup with Logging {
+object KafkaMetricsGroup extends KafkaMetricsGroup with FastLogging {
   /**
    * To make sure all the metrics be de-registered after consumer/producer close, the metric names should be
    * put into the metric name set.

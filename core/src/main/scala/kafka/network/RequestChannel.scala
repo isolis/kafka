@@ -25,7 +25,7 @@ import java.util.concurrent._
 import com.yammer.metrics.core.Gauge
 import kafka.api._
 import kafka.metrics.KafkaMetricsGroup
-import kafka.utils.{Logging, SystemTime}
+import kafka.utils.{FastLogging, SystemTime}
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.network.Send
 import org.apache.kafka.common.protocol.{ApiKeys, SecurityProtocol, Protocol}
@@ -34,7 +34,7 @@ import org.apache.kafka.common.security.auth.KafkaPrincipal
 import org.apache.log4j.Logger
 
 
-object RequestChannel extends Logging {
+object RequestChannel extends FastLogging {
   val AllDone = new Request(processor = 1, connectionId = "2", new Session(KafkaPrincipal.ANONYMOUS, InetAddress.getLocalHost()), buffer = getShutdownReceive(), startTimeMs = 0, securityProtocol = SecurityProtocol.PLAINTEXT)
 
   def getShutdownReceive() = {

@@ -18,9 +18,9 @@
 package kafka.common
 
 import util.matching.Regex
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 
-trait Config extends Logging {
+trait Config extends FastLogging {
 
   def validateChars(prop: String, value: String) {
     val legalChars = "[a-zA-Z0-9\\._\\-]"

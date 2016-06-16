@@ -18,13 +18,13 @@
 package kafka.consumer
 
 
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import java.util.regex.{PatternSyntaxException, Pattern}
 import kafka.common.Topic
 import org.apache.kafka.common.internals.TopicConstants
 
 
-sealed abstract class TopicFilter(rawRegex: String) extends Logging {
+sealed abstract class TopicFilter(rawRegex: String) extends FastLogging {
 
   val regex = rawRegex
           .trim

@@ -18,7 +18,7 @@ package kafka.server
 
 import kafka.utils.ZkUtils._
 import kafka.utils.CoreUtils._
-import kafka.utils.{Json, SystemTime, Logging, ZKCheckedEphemeral}
+import kafka.utils.{Json, SystemTime, FastLogging, ZKCheckedEphemeral}
 import org.I0Itec.zkclient.exception.ZkNodeExistsException
 import org.I0Itec.zkclient.IZkDataListener
 import kafka.controller.ControllerContext
@@ -36,7 +36,7 @@ class ZookeeperLeaderElector(controllerContext: ControllerContext,
                              onBecomingLeader: () => Unit,
                              onResigningAsLeader: () => Unit,
                              brokerId: Int)
-  extends LeaderElector with Logging {
+  extends LeaderElector with FastLogging {
   var leaderId = -1
   // create the election path in ZK, if one does not exist
   val index = electionPath.lastIndexOf("/")
@@ -61,11 +61,11 @@ class ZookeeperLeaderElector(controllerContext: ControllerContext,
   def elect: Boolean = {
     val timestamp = SystemTime.milliseconds.toString
     val electString = Json.encode(Map("version" -> 1, "brokerid" -> brokerId, "timestamp" -> timestamp))
-   
-   leaderId = getControllerID 
-    /* 
-     * We can get here during the initial startup and the handleDeleted ZK callback. Because of the potential race condition, 
-     * it's possible that the controller has already been elected when we get here. This check will prevent the following 
+
+   leaderId = getControllerID
+    /*
+     * We can get here during the initial startup and the handleDeleted ZK callback. Because of the potential race condition,
+     * it's possible that the controller has already been elected when we get here. This check will prevent the following
      * createEphemeralPath method from getting into an infinite loop if this broker is already the controller.
      */
     if(leaderId != -1) {
@@ -85,7 +85,7 @@ class ZookeeperLeaderElector(controllerContext: ControllerContext,
     } catch {
       case e: ZkNodeExistsException =>
         // If someone else has written the path, then
-        leaderId = getControllerID 
+        leaderId = getControllerID
 
         if (leaderId != -1)
           debug("Broker %d was elected as leader instead of broker %d".format(leaderId, brokerId))
@@ -114,9 +114,10 @@ class ZookeeperLeaderElector(controllerContext: ControllerContext,
    * We do not have session expiration listen in the ZkElection, but assuming the caller who uses this module will
    * have its own session expiration listener and handler
    */
-  class LeaderChangeListener extends IZkDataListener with Logging {
+  class LeaderChangeListener extends IZkDataListener with FastLogging {
     /**
      * Called when the leader information stored in zookeeper has changed. Record the new leader in memory
+ *
      * @throws Exception On any error.
      */
     @throws(classOf[Exception])
@@ -133,6 +134,7 @@ class ZookeeperLeaderElector(controllerContext: ControllerContext,
 
     /**
      * Called when the leader information stored in zookeeper has been delete. Try to elect as the leader
+ *
      * @throws Exception
      *             On any error.
      */

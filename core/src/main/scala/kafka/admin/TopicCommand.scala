@@ -35,7 +35,7 @@ import org.apache.kafka.clients.consumer.{ConsumerConfig => NewConsumerConfig}
 import org.apache.kafka.common.internals.TopicConstants
 
 
-object TopicCommand extends Logging {
+object TopicCommand extends FastLogging {
 
   def main(args: Array[String]): Unit = {
 
@@ -386,7 +386,7 @@ object TopicCommand extends Logging {
       "*****************************************************************************************************\n" +
       "*** WARNING: you are creating a topic where the max.message.bytes is greater than the broker's    ***\n" +
       "*** default max.message.bytes. This operation is potentially dangerous. Consumers will get        ***\n" +
-      s"*** failures if their fetch.message.max.bytes (old consumer) or ${NewConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG}         ***\n"+ 
+      s"*** failures if their fetch.message.max.bytes (old consumer) or ${NewConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG}         ***\n"+
       "*** (new consumer) < the value you are using.                                                     ***\n" +
       "*****************************************************************************************************\n" +
       s"- value set here: $maxMessageBytes\n" +

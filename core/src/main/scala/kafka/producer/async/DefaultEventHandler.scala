@@ -39,7 +39,7 @@ class DefaultEventHandler[K,V](config: ProducerConfig,
                                private val producerPool: ProducerPool,
                                private val topicPartitionInfos: HashMap[String, TopicMetadata] = new HashMap[String, TopicMetadata],
                                private val time: Time = SystemTime)
-  extends EventHandler[K,V] with Logging {
+  extends EventHandler[K,V] with FastLogging {
 
   val isSync = ("sync" == config.producerType)
 

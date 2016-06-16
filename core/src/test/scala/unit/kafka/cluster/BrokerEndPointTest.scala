@@ -19,13 +19,13 @@ package kafka.cluster
 
 import java.nio.ByteBuffer
 
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.protocol.SecurityProtocol
 import org.junit.Test
 
 import scala.collection.mutable
 
-class BrokerEndPointTest extends Logging {
+class BrokerEndPointTest extends FastLogging {
 
   @Test
   def testHashAndEquals() {

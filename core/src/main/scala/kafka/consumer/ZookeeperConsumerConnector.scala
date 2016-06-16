@@ -85,7 +85,7 @@ private[kafka] object ZookeeperConsumerConnector {
 
 private[kafka] class ZookeeperConsumerConnector(val config: ConsumerConfig,
                                                 val enableFetcher: Boolean) // for testing only
-        extends ConsumerConnector with Logging with KafkaMetricsGroup {
+        extends ConsumerConnector with FastLogging with KafkaMetricsGroup {
 
   private val isShuttingDown = new AtomicBoolean(false)
   private val rebalanceLock = new Object

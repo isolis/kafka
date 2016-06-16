@@ -19,7 +19,7 @@ package kafka.tools
 
 import kafka.metrics.KafkaMetricsReporter
 import kafka.producer.{OldProducer, NewShinyProducer}
-import kafka.utils.{ToolsUtils, VerifiableProperties, Logging, CommandLineUtils}
+import kafka.utils.{ToolsUtils, VerifiableProperties, FastLogging, CommandLineUtils}
 import kafka.message.CompressionCodec
 import kafka.serializer._
 
@@ -36,7 +36,7 @@ import org.apache.log4j.Logger
  * Load test for the producer
  */
 @deprecated("This class will be replaced by org.apache.kafka.tools.ProducerPerformance after the old producer client is removed", "0.9.0.0")
-object ProducerPerformance extends Logging {
+object ProducerPerformance extends FastLogging {
 
   def main(args: Array[String]) {
     val logger = Logger.getLogger(getClass)

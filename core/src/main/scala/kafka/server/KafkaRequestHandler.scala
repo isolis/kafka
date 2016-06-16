@@ -32,7 +32,7 @@ class KafkaRequestHandler(id: Int,
                           val aggregateIdleMeter: Meter,
                           val totalHandlerThreads: Int,
                           val requestChannel: RequestChannel,
-                          apis: KafkaApis) extends Runnable with Logging {
+                          apis: KafkaApis) extends Runnable with FastLogging {
   this.logIdent = "[Kafka Request Handler " + id + " on Broker " + brokerId + "], "
 
   def run() {
@@ -70,7 +70,7 @@ class KafkaRequestHandler(id: Int,
 class KafkaRequestHandlerPool(val brokerId: Int,
                               val requestChannel: RequestChannel,
                               val apis: KafkaApis,
-                              numThreads: Int) extends Logging with KafkaMetricsGroup {
+                              numThreads: Int) extends FastLogging with KafkaMetricsGroup {
 
   /* a meter to track the average free capacity of the request handlers */
   private val aggregateIdleMeter = newMeter("RequestHandlerAvgIdlePercent", "percent", TimeUnit.NANOSECONDS)
@@ -121,7 +121,7 @@ class BrokerTopicMetrics(name: Option[String]) extends KafkaMetricsGroup {
   }
 }
 
-object BrokerTopicStats extends Logging {
+object BrokerTopicStats extends FastLogging {
   val MessagesInPerSec = "MessagesInPerSec"
   val BytesInPerSec = "BytesInPerSec"
   val BytesOutPerSec = "BytesOutPerSec"

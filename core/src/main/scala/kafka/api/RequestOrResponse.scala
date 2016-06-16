@@ -7,7 +7,7 @@ package kafka.api
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -19,7 +19,7 @@ package kafka.api
 
 import java.nio._
 import kafka.network.RequestChannel
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 
 object Request {
   val OrdinaryConsumerId: Int = -1
@@ -30,10 +30,10 @@ object Request {
 }
 
 
-abstract class RequestOrResponse(val requestId: Option[Short] = None) extends Logging {
+abstract class RequestOrResponse(val requestId: Option[Short] = None) extends FastLogging {
 
   def sizeInBytes: Int
-  
+
   def writeTo(buffer: ByteBuffer): Unit
 
   def handleError(e: Throwable, requestChannel: RequestChannel, request: RequestChannel.Request): Unit = {}

@@ -18,7 +18,7 @@ package kafka.server
 
 import java.util.concurrent.{ConcurrentHashMap, DelayQueue, TimeUnit}
 
-import kafka.utils.{ShutdownableThread, Logging}
+import kafka.utils.{ShutdownableThread, FastLogging}
 import org.apache.kafka.common.MetricName
 import org.apache.kafka.common.metrics._
 import org.apache.kafka.common.metrics.stats.{Total, Rate, Avg}
@@ -28,6 +28,7 @@ import org.apache.kafka.common.utils.Time
 
 /**
  * Represents the sensors aggregated per client
+ *
  * @param quotaSensor @Sensor that tracks the quota
  * @param throttleTimeSensor @Sensor that tracks the throttle time
  */
@@ -35,6 +36,7 @@ private case class ClientSensors(quotaSensor: Sensor, throttleTimeSensor: Sensor
 
 /**
  * Configuration settings for quota management
+ *
  * @param quotaBytesPerSecondDefault The default bytes per second quota allocated to any client
  * @param numQuotaSamples The number of samples to retain in memory
  * @param quotaWindowSizeSeconds The time span of each sample
@@ -59,6 +61,7 @@ object ClientQuotaManagerConfig {
 /**
  * Helper class that records per-client metrics. It is also responsible for maintaining Quota usage statistics
  * for all clients.
+ *
  * @param config @ClientQuotaManagerConfig quota configs
  * @param metrics @Metrics Metrics instance
  * @param apiKey API Key for the request
@@ -67,7 +70,7 @@ object ClientQuotaManagerConfig {
 class ClientQuotaManager(private val config: ClientQuotaManagerConfig,
                          private val metrics: Metrics,
                          private val apiKey: String,
-                         private val time: Time) extends Logging {
+                         private val time: Time) extends FastLogging {
   private val overriddenQuota = new ConcurrentHashMap[String, Quota]()
   private val defaultQuota = Quota.upperBound(config.quotaBytesPerSecondDefault)
   private val lock = new ReentrantReadWriteLock()
@@ -82,6 +85,7 @@ class ClientQuotaManager(private val config: ClientQuotaManagerConfig,
 
   /**
    * Reaper thread that triggers callbacks on all throttled requests
+ *
    * @param delayQueue DelayQueue to dequeue from
    */
   class ThrottledRequestReaper(delayQueue: DelayQueue[ThrottledResponse]) extends ShutdownableThread(
@@ -100,6 +104,7 @@ class ClientQuotaManager(private val config: ClientQuotaManagerConfig,
 
   /**
    * Records that a clientId changed some metric being throttled (produced/consumed bytes, QPS etc.)
+ *
    * @param clientId clientId that produced the data
    * @param value amount of data written in bytes
    * @param callback Callback function. This will be triggered immediately if quota is not violated.
@@ -244,6 +249,7 @@ class ClientQuotaManager(private val config: ClientQuotaManagerConfig,
 
   /**
    * Overrides quotas per clientId
+ *
    * @param clientId client to override
    * @param quota custom quota to apply
    */

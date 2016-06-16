@@ -22,7 +22,7 @@ import java.util.Properties
 import kafka.api.TopicMetadata
 import kafka.cluster.BrokerEndPoint
 import kafka.common.UnavailableProducerException
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 
 import scala.collection.mutable.HashMap
 
@@ -41,7 +41,7 @@ object ProducerPool {
 }
 
 @deprecated("This class has been deprecated and will be removed in a future release.", "0.10.0.0")
-class ProducerPool(val config: ProducerConfig) extends Logging {
+class ProducerPool(val config: ProducerConfig) extends FastLogging {
   private val syncProducers = new HashMap[Int, SyncProducer]
   private val lock = new Object()
 

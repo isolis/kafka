@@ -25,7 +25,7 @@ import org.apache.zookeeper.data.Stat
 
 import scala.collection._
 
-object ReplicationUtils extends Logging {
+object ReplicationUtils extends FastLogging {
 
   private val IsrChangeNotificationPrefix = "isr_change_"
 

@@ -47,7 +47,7 @@ import com.yammer.metrics.core.Gauge
  *
  * A subclass of DelayedOperation needs to provide an implementation of both onComplete() and tryComplete().
  */
-abstract class DelayedOperation(override val delayMs: Long) extends TimerTask with Logging {
+abstract class DelayedOperation(override val delayMs: Long) extends TimerTask with FastLogging {
 
   private val completed = new AtomicBoolean(false)
 
@@ -127,7 +127,7 @@ class DelayedOperationPurgatory[T <: DelayedOperation](purgatoryName: String,
                                                        brokerId: Int = 0,
                                                        purgeInterval: Int = 1000,
                                                        reaperEnabled: Boolean = true)
-        extends Logging with KafkaMetricsGroup {
+        extends FastLogging with KafkaMetricsGroup {
 
   /* a list of operation watching keys */
   private val watchersForKey = new Pool[Any, Watchers](Some((key: Any) => new Watchers(key)))

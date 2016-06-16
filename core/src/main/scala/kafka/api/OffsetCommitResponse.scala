@@ -19,11 +19,11 @@ package kafka.api
 
 import java.nio.ByteBuffer
 
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import kafka.common.TopicAndPartition
 import org.apache.kafka.common.protocol.Errors
 
-object OffsetCommitResponse extends Logging {
+object OffsetCommitResponse extends FastLogging {
   val CurrentVersion: Short = 0
 
   def readFrom(buffer: ByteBuffer): OffsetCommitResponse = {

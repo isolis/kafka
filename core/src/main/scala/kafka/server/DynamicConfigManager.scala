@@ -20,7 +20,7 @@ package kafka.server
 import kafka.common.{NotificationHandler, ZkNodeChangeNotificationListener}
 import kafka.security.auth.Resource
 import kafka.utils.Json
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import kafka.utils.SystemTime
 import kafka.utils.Time
 import kafka.utils.ZkUtils
@@ -76,7 +76,7 @@ object ConfigType {
 class DynamicConfigManager(private val zkUtils: ZkUtils,
                            private val configHandlers: Map[String, ConfigHandler],
                            private val changeExpirationMs: Long = 15*60*1000,
-                           private val time: Time = SystemTime) extends Logging {
+                           private val time: Time = SystemTime) extends FastLogging {
   private var lastExecutedChange = -1L
 
   object ConfigChangedNotificationHandler extends NotificationHandler {

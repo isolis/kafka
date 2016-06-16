@@ -18,7 +18,7 @@
 package kafka.cluster
 
 import kafka.log.Log
-import kafka.utils.{SystemTime, Time, Logging}
+import kafka.utils.{SystemTime, Time, FastLogging}
 import kafka.server.{LogReadResult, LogOffsetMetadata}
 import kafka.common.KafkaException
 
@@ -28,7 +28,7 @@ class Replica(val brokerId: Int,
               val partition: Partition,
               time: Time = SystemTime,
               initialHighWatermarkValue: Long = 0L,
-              val log: Option[Log] = None) extends Logging {
+              val log: Option[Log] = None) extends FastLogging {
   // the high watermark offset value, in non-leader replicas only its message offsets are kept
   @volatile private[this] var highWatermarkMetadata: LogOffsetMetadata = new LogOffsetMetadata(initialHighWatermarkValue)
   // the log end offset value, kept in all replicas;

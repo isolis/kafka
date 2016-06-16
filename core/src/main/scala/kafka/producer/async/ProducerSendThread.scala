@@ -17,7 +17,7 @@
 
 package kafka.producer.async
 
-import kafka.utils.{SystemTime, Logging}
+import kafka.utils.{SystemTime, FastLogging}
 import java.util.concurrent.{TimeUnit, CountDownLatch, BlockingQueue}
 import collection.mutable.ArrayBuffer
 import kafka.producer.KeyedMessage
@@ -30,7 +30,7 @@ class ProducerSendThread[K,V](val threadName: String,
                               val handler: EventHandler[K,V],
                               val queueTime: Long,
                               val batchSize: Int,
-                              val clientId: String) extends Thread(threadName) with Logging with KafkaMetricsGroup {
+                              val clientId: String) extends Thread(threadName) with FastLogging with KafkaMetricsGroup {
 
   private val shutdownLatch = new CountDownLatch(1)
   private val shutdownCommand = new KeyedMessage[K,V]("shutdown", null.asInstanceOf[K], null.asInstanceOf[V])

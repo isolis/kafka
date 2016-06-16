@@ -21,7 +21,7 @@ import java.net.InetSocketAddress
 import java.nio.channels._
 
 import kafka.api.RequestOrResponse
-import kafka.utils.{Logging, nonthreadsafe}
+import kafka.utils.{FastLogging, nonthreadsafe}
 import org.apache.kafka.common.network.NetworkReceive
 
 
@@ -34,11 +34,11 @@ object BlockingChannel{
  *
  */
 @nonthreadsafe
-class BlockingChannel( val host: String, 
-                       val port: Int, 
-                       val readBufferSize: Int, 
-                       val writeBufferSize: Int, 
-                       val readTimeoutMs: Int ) extends Logging {
+class BlockingChannel( val host: String,
+                       val port: Int,
+                       val readBufferSize: Int,
+                       val writeBufferSize: Int,
+                       val readTimeoutMs: Int ) extends FastLogging {
   private var connected = false
   private var channel: SocketChannel = null
   private var readChannel: ReadableByteChannel = null
@@ -75,7 +75,7 @@ class BlockingChannel( val host: String,
         val msg = "Created socket with SO_TIMEOUT = %d (requested %d), SO_RCVBUF = %d (requested %d), SO_SNDBUF = %d (requested %d), connectTimeoutMs = %d."
         debug(msg.format(channel.socket.getSoTimeout,
                          readTimeoutMs,
-                         channel.socket.getReceiveBufferSize, 
+                         channel.socket.getReceiveBufferSize,
                          readBufferSize,
                          channel.socket.getSendBufferSize,
                          writeBufferSize,
@@ -86,7 +86,7 @@ class BlockingChannel( val host: String,
       }
     }
   }
-  
+
   def disconnect() = lock synchronized {
     if(channel != null) {
       swallow(channel.close())
@@ -112,7 +112,7 @@ class BlockingChannel( val host: String,
     val send = new RequestOrResponseSend(connectionId, request)
     send.writeCompletely(writeChannel)
   }
-  
+
   def receive(): NetworkReceive = {
     if(!connected)
       throw new ClosedChannelException()

@@ -20,7 +20,7 @@ package kafka.api
 import kafka.cluster.BrokerEndPoint
 import java.nio.ByteBuffer
 import kafka.api.ApiUtils._
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.protocol.Errors
 
 object TopicMetadata {
@@ -40,7 +40,7 @@ object TopicMetadata {
   }
 }
 
-case class TopicMetadata(topic: String, partitionsMetadata: Seq[PartitionMetadata], errorCode: Short = Errors.NONE.code) extends Logging {
+case class TopicMetadata(topic: String, partitionsMetadata: Seq[PartitionMetadata], errorCode: Short = Errors.NONE.code) extends FastLogging {
   def sizeInBytes: Int = {
     2 /* error code */ +
     shortStringLength(topic) +
@@ -112,7 +112,7 @@ case class PartitionMetadata(partitionId: Int,
                              leader: Option[BrokerEndPoint],
                              replicas: Seq[BrokerEndPoint],
                              isr: Seq[BrokerEndPoint] = Seq.empty,
-                             errorCode: Short = Errors.NONE.code) extends Logging {
+                             errorCode: Short = Errors.NONE.code) extends FastLogging {
   def sizeInBytes: Int = {
     2 /* error code */ +
     4 /* partition id */ +

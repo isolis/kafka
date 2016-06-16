@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -20,7 +20,7 @@ package kafka.consumer
 import java.util.concurrent._
 import java.util.concurrent.atomic._
 import kafka.message._
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 
 class PartitionTopicInfo(val topic: String,
                          val partitionId: Int,
@@ -28,7 +28,7 @@ class PartitionTopicInfo(val topic: String,
                          private val consumedOffset: AtomicLong,
                          private val fetchedOffset: AtomicLong,
                          private val fetchSize: AtomicInteger,
-                         private val clientId: String) extends Logging {
+                         private val clientId: String) extends FastLogging {
 
   debug("initial consumer offset of " + this + " is " + consumedOffset.get)
   debug("initial fetch offset of " + this + " is " + fetchedOffset.get)
@@ -66,7 +66,7 @@ class PartitionTopicInfo(val topic: String,
       chunkQueue.put(new FetchedDataChunk(messages, this, fetchedOffset.get))
     }
   }
-  
+
   override def toString: String = topic + ":" + partitionId.toString + ": fetched offset = " + fetchedOffset.get +
     ": consumed offset = " + consumedOffset.get
 }

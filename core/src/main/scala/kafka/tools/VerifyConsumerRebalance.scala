@@ -21,9 +21,9 @@ import joptsimple.OptionParser
 import org.I0Itec.zkclient.ZkClient
 import org.apache.kafka.common.security._
 
-import kafka.utils.{Logging, ZKGroupTopicDirs, ZkUtils, CommandLineUtils}
+import kafka.utils.{FastLogging, ZKGroupTopicDirs, ZkUtils, CommandLineUtils}
 
-object VerifyConsumerRebalance extends Logging {
+object VerifyConsumerRebalance extends FastLogging {
   def main(args: Array[String]) {
     val parser = new OptionParser()
 
@@ -32,7 +32,7 @@ object VerifyConsumerRebalance extends Logging {
     val groupOpt = parser.accepts("group", "Consumer group.").
       withRequiredArg().ofType(classOf[String])
     parser.accepts("help", "Print this message.")
-    
+
     if(args.length == 0)
       CommandLineUtils.printUsageAndDie(parser, "Validate that all partitions have a consumer for a given consumer group.")
 
@@ -52,7 +52,7 @@ object VerifyConsumerRebalance extends Logging {
     try {
       zkUtils = ZkUtils(zkConnect,
                         30000,
-                        30000, 
+                        30000,
                         JaasUtils.isZkSecurityEnabled())
 
       debug("zkConnect = %s; group = %s".format(zkConnect, group))

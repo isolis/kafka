@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -21,12 +21,12 @@ import java.util.Properties
 
 import joptsimple.OptionParser
 import kafka.server.{KafkaServer, KafkaServerStartable}
-import kafka.utils.{CommandLineUtils, Logging}
+import kafka.utils.{CommandLineUtils, FastLogging}
 import org.apache.kafka.common.utils.Utils
 
 import scala.collection.JavaConversions._
 
-object Kafka extends Logging {
+object Kafka extends FastLogging {
 
   def getPropsFromArgs(args: Array[String]): Properties = {
     val optionParser = new OptionParser

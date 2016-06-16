@@ -17,7 +17,7 @@
 
 package kafka.message
 
-import kafka.utils.{IteratorTemplate, Logging}
+import kafka.utils.{IteratorTemplate, FastLogging}
 import kafka.common.{KafkaException, LongRef}
 import java.nio.ByteBuffer
 import java.nio.channels._
@@ -254,7 +254,7 @@ private class OffsetAssigner(offsets: Seq[Long]) {
  * 4. This solution works for compacted message sets as well.
  *
  */
-class ByteBufferMessageSet(val buffer: ByteBuffer) extends MessageSet with Logging {
+class ByteBufferMessageSet(val buffer: ByteBuffer) extends MessageSet with FastLogging {
   private var shallowValidByteCount = -1
 
   private[kafka] def this(compressionCodec: CompressionCodec,

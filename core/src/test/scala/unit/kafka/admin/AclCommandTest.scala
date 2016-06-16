@@ -22,12 +22,12 @@ import java.util.Properties
 import kafka.admin.AclCommand.AclCommandOptions
 import kafka.security.auth._
 import kafka.server.KafkaConfig
-import kafka.utils.{Logging, TestUtils}
+import kafka.utils.{FastLogging, TestUtils}
 import kafka.zk.ZooKeeperTestHarness
 import org.apache.kafka.common.security.auth.KafkaPrincipal
 import org.junit.Test
 
-class AclCommandTest extends ZooKeeperTestHarness with Logging {
+class AclCommandTest extends ZooKeeperTestHarness with FastLogging {
 
   private val Users = Set(KafkaPrincipal.fromString("User:CN=writeuser,OU=Unknown,O=Unknown,L=Unknown,ST=Unknown,C=Unknown"), KafkaPrincipal.fromString("User:test2"))
   private val Hosts = Set("host1", "host2")

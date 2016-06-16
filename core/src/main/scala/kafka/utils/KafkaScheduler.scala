@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -23,28 +23,28 @@ import org.apache.kafka.common.utils.Utils
 
 /**
  * A scheduler for running jobs
- * 
- * This interface controls a job scheduler that allows scheduling either repeating background jobs 
+ *
+ * This interface controls a job scheduler that allows scheduling either repeating background jobs
  * that execute periodically or delayed one-time actions that are scheduled in the future.
  */
 trait Scheduler {
-  
+
   /**
    * Initialize this scheduler so it is ready to accept scheduling of tasks
    */
   def startup()
-  
+
   /**
-   * Shutdown this scheduler. When this method is complete no more executions of background tasks will occur. 
+   * Shutdown this scheduler. When this method is complete no more executions of background tasks will occur.
    * This includes tasks scheduled with a delayed execution.
    */
   def shutdown()
-  
+
   /**
    * Check if the scheduler has been started
    */
   def isStarted: Boolean
-  
+
   /**
    * Schedule a task
    * @param name The name of this task
@@ -57,17 +57,17 @@ trait Scheduler {
 
 /**
  * A scheduler based on java.util.concurrent.ScheduledThreadPoolExecutor
- * 
+ *
  * It has a pool of kafka-scheduler- threads that do the actual work.
- * 
+ *
  * @param threads The number of threads in the thread pool
  * @param threadNamePrefix The name to use for scheduler threads. This prefix will have a number appended to it.
  * @param daemon If true the scheduler threads will be "daemon" threads and will not block jvm shutdown.
  */
 @threadsafe
-class KafkaScheduler(val threads: Int, 
-                     val threadNamePrefix: String = "kafka-scheduler-", 
-                     daemon: Boolean = true) extends Scheduler with Logging {
+class KafkaScheduler(val threads: Int,
+                     val threadNamePrefix: String = "kafka-scheduler-",
+                     daemon: Boolean = true) extends Scheduler with FastLogging {
   private var executor: ScheduledThreadPoolExecutor = null
   private val schedulerThreadId = new AtomicInteger(0)
 
@@ -80,12 +80,12 @@ class KafkaScheduler(val threads: Int,
       executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false)
       executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false)
       executor.setThreadFactory(new ThreadFactory() {
-                                  def newThread(runnable: Runnable): Thread = 
+                                  def newThread(runnable: Runnable): Thread =
                                     Utils.newThread(threadNamePrefix + schedulerThreadId.getAndIncrement(), runnable, daemon)
                                 })
     }
   }
-  
+
   override def shutdown() {
     debug("Shutting down task scheduler.")
     // We use the local variable to avoid NullPointerException if another thread shuts down scheduler at same time.
@@ -120,13 +120,13 @@ class KafkaScheduler(val threads: Int,
         executor.schedule(runnable, delay, unit)
     }
   }
-  
+
   def isStarted: Boolean = {
     this synchronized {
       executor != null
     }
   }
-  
+
   private def ensureRunning = {
     if(!isStarted)
       throw new IllegalStateException("Kafka scheduler is not running.")

@@ -26,7 +26,7 @@ import java.util.Properties
 import kafka.utils._
 import kafka.log._
 import kafka.zk.ZooKeeperTestHarness
-import kafka.utils.{Logging, TestUtils, ZkUtils}
+import kafka.utils.{FastLogging, TestUtils, ZkUtils}
 import kafka.common.{TopicAndPartition, TopicExistsException}
 import kafka.server.{ConfigType, KafkaConfig, KafkaServer}
 import java.io.File
@@ -35,7 +35,7 @@ import TestUtils._
 
 import scala.collection.{Map, immutable}
 
-class AdminTest extends ZooKeeperTestHarness with Logging with RackAwareTest {
+class AdminTest extends ZooKeeperTestHarness with FastLogging with RackAwareTest {
 
   @Test
   def testReplicaAssignment() {

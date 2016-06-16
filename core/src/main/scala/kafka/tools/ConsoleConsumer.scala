@@ -39,7 +39,7 @@ import scala.collection.JavaConverters._
 /**
  * Consumer that dumps messages to standard out.
  */
-object ConsoleConsumer extends Logging {
+object ConsoleConsumer extends FastLogging {
 
   var messageCount = 0
 

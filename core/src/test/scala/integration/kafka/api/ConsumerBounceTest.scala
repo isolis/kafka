@@ -16,7 +16,7 @@ package kafka.api
 import java.util
 
 import kafka.server.KafkaConfig
-import kafka.utils.{Logging, ShutdownableThread, TestUtils}
+import kafka.utils.{FastLogging, ShutdownableThread, TestUtils}
 import org.apache.kafka.clients.consumer._
 import org.apache.kafka.clients.producer.{ProducerConfig, ProducerRecord}
 import org.apache.kafka.common.errors.{IllegalGenerationException, UnknownMemberIdException}
@@ -31,7 +31,7 @@ import scala.collection.JavaConversions._
 /**
  * Integration tests for the new consumer that cover basic usage as well as server failures
  */
-class ConsumerBounceTest extends IntegrationTestHarness with Logging {
+class ConsumerBounceTest extends IntegrationTestHarness with FastLogging {
 
   val producerCount = 1
   val consumerCount = 2

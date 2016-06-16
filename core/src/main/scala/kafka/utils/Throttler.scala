@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -24,27 +24,27 @@ import scala.math._
 
 /**
  * A class to measure and throttle the rate of some process. The throttler takes a desired rate-per-second
- * (the units of the process don't matter, it could be bytes or a count of some other thing), and will sleep for 
+ * (the units of the process don't matter, it could be bytes or a count of some other thing), and will sleep for
  * an appropriate amount of time when maybeThrottle() is called to attain the desired rate.
- * 
+ *
  * @param desiredRatePerSec: The rate we want to hit in units/sec
  * @param checkIntervalMs: The interval at which to check our rate
  * @param throttleDown: Does throttling increase or decrease our rate?
  * @param time: The time implementation to use
  */
 @threadsafe
-class Throttler(val desiredRatePerSec: Double, 
-                val checkIntervalMs: Long = 100L, 
+class Throttler(val desiredRatePerSec: Double,
+                val checkIntervalMs: Long = 100L,
                 val throttleDown: Boolean = true,
                 metricName: String = "throttler",
                 units: String = "entries",
-                val time: Time = SystemTime) extends Logging with KafkaMetricsGroup {
-  
+                val time: Time = SystemTime) extends FastLogging with KafkaMetricsGroup {
+
   private val lock = new Object
   private val meter = newMeter(metricName, units, TimeUnit.SECONDS)
   private var periodStartNs: Long = time.nanoseconds
   private var observedSoFar: Double = 0.0
-  
+
   def maybeThrottle(observed: Double) {
     meter.mark(observed.toLong)
     lock synchronized {
@@ -71,11 +71,11 @@ class Throttler(val desiredRatePerSec: Double,
       }
     }
   }
-  
+
 }
 
 object Throttler {
-  
+
   def main(args: Array[String]) {
     val rand = new Random()
     val throttler = new Throttler(100000, 100, true, time = SystemTime)

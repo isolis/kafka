@@ -23,7 +23,7 @@ import org.apache.kafka.common.requests.{StopReplicaResponse, AbstractRequestRes
 
 import collection.mutable
 import collection.JavaConverters._
-import kafka.utils.{ShutdownableThread, Logging}
+import kafka.utils.{ShutdownableThread, FastLogging}
 import kafka.utils.CoreUtils._
 import kafka.utils.ZkUtils._
 import collection.Set
@@ -68,13 +68,14 @@ import java.util.concurrent.atomic.AtomicBoolean
  *    as well as from zookeeper. This is the only time the /brokers/topics/<topic> path gets deleted. On the other hand,
  *    if no replica is in TopicDeletionStarted state and at least one replica is in TopicDeletionFailed state, then
  *    it marks the topic for deletion retry.
+ *
  * @param controller
  * @param initialTopicsToBeDeleted The topics that are queued up for deletion in zookeeper at the time of controller failover
  * @param initialTopicsIneligibleForDeletion The topics ineligible for deletion due to any of the conditions mentioned in #3 above
  */
 class TopicDeletionManager(controller: KafkaController,
                            initialTopicsToBeDeleted: Set[String] = Set.empty,
-                           initialTopicsIneligibleForDeletion: Set[String] = Set.empty) extends Logging {
+                           initialTopicsIneligibleForDeletion: Set[String] = Set.empty) extends FastLogging {
   this.logIdent = "[Topic Deletion Manager " + controller.config.brokerId + "], "
   val controllerContext = controller.controllerContext
   val partitionStateMachine = controller.partitionStateMachine
@@ -121,6 +122,7 @@ class TopicDeletionManager(controller: KafkaController,
    * Invoked by the child change listener on /admin/delete_topics to queue up the topics for deletion. The topic gets added
    * to the topicsToBeDeleted list and only gets removed from the list when the topic deletion has completed successfully
    * i.e. all replicas of all partitions of that topic are deleted successfully.
+ *
    * @param topics Topics that should be deleted
    */
   def enqueueTopicsForDeletion(topics: Set[String]) {
@@ -137,6 +139,7 @@ class TopicDeletionManager(controller: KafkaController,
    * 2. Partition reassignment completes. Any partitions belonging to topics queued up for deletion finished reassignment
    * 3. Preferred replica election completes. Any partitions belonging to topics queued up for deletion finished
    *    preferred replica election
+ *
    * @param topics Topics for which deletion can be resumed
    */
   def resumeDeletionForTopics(topics: Set[String] = Set.empty) {
@@ -155,6 +158,7 @@ class TopicDeletionManager(controller: KafkaController,
    * are moved from ReplicaDeletionStarted to ReplicaDeletionIneligible state. Also, the topic is added to the list of topics
    * ineligible for deletion until further notice. The delete topic thread is notified so it can retry topic deletion
    * if it has received a response for all replicas of a topic to be deleted
+ *
    * @param replicas Replicas for which deletion has failed
    */
   def failReplicaDeletion(replicas: Set[PartitionAndReplica]) {
@@ -176,6 +180,7 @@ class TopicDeletionManager(controller: KafkaController,
    * 1. replicas being down
    * 2. partition reassignment in progress for some partitions of the topic
    * 3. preferred replica election in progress for some partitions of the topic
+ *
    * @param topics Topics that should be marked ineligible for deletion. No op if the topic is was not previously queued up for deletion
    */
   def markTopicIneligibleForDeletion(topics: Set[String]) {
@@ -242,6 +247,7 @@ class TopicDeletionManager(controller: KafkaController,
    * Invoked by the StopReplicaResponse callback when it receives no error code for a replica of a topic to be deleted.
    * As part of this, the replicas are moved from ReplicaDeletionStarted to ReplicaDeletionSuccessful state. The delete
    * topic thread is notified so it can tear down the topic if all replicas of a topic have been successfully deleted
+ *
    * @param replicas Replicas that were successfully deleted by the broker
    */
   private def completeReplicaDeletion(replicas: Set[PartitionAndReplica]) {
@@ -256,6 +262,7 @@ class TopicDeletionManager(controller: KafkaController,
    * 1. Topic deletion is not already complete
    * 2. Topic deletion is currently not in progress for that topic
    * 3. Topic is currently marked ineligible for deletion
+ *
    * @param topic Topic
    * @return Whether or not deletion can be retried for the topic
    */
@@ -266,6 +273,7 @@ class TopicDeletionManager(controller: KafkaController,
   /**
    * If the topic is queued for deletion but deletion is not currently under progress, then deletion is retried for that topic
    * To ensure a successful retry, reset states for respective replicas from ReplicaDeletionIneligible to OfflineReplica state
+ *
    *@param topic Topic for which deletion should be retried
    */
   private def markTopicForDeletionRetry(topic: String) {
@@ -328,6 +336,7 @@ class TopicDeletionManager(controller: KafkaController,
    * 1. Move all dead replicas directly to ReplicaDeletionIneligible state. Also mark the respective topics ineligible
    *    for deletion if some replicas are dead since it won't complete successfully anyway
    * 2. Move all alive replicas to ReplicaDeletionStarted state so they can be deleted successfully
+ *
    *@param replicasForTopicsToBeDeleted
    */
   private def startReplicaDeletion(replicasForTopicsToBeDeleted: Set[PartitionAndReplica]) {

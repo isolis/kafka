@@ -29,7 +29,7 @@ import kafka.utils._
             "Please use org.apache.kafka.clients.producer.KafkaProducer instead.", "0.10.0.0")
 class Producer[K,V](val config: ProducerConfig,
                     private val eventHandler: EventHandler[K,V])  // only for unit testing
-  extends Logging {
+  extends FastLogging {
 
   private val hasShutdown = new AtomicBoolean(false)
   private val queue = new LinkedBlockingQueue[KeyedMessage[K,V]](config.queueBufferingMaxMessages)

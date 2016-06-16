@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -19,7 +19,7 @@ package kafka.consumer
 
 import scala.collection._
 import org.I0Itec.zkclient.ZkClient
-import kafka.utils.{Json, ZKGroupDirs, ZkUtils, Logging, CoreUtils}
+import kafka.utils.{Json, ZKGroupDirs, ZkUtils, FastLogging, CoreUtils}
 import kafka.common.KafkaException
 
 private[kafka] trait TopicCount {
@@ -36,7 +36,7 @@ case class ConsumerThreadId(consumer: String, threadId: Int) extends Ordered[Con
   def compare(that: ConsumerThreadId) = toString.compare(that.toString)
 }
 
-private[kafka] object TopicCount extends Logging {
+private[kafka] object TopicCount extends FastLogging {
   val whiteListPattern = "white_list"
   val blackListPattern = "black_list"
   val staticPattern = "static"

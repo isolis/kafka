@@ -29,7 +29,7 @@ import kafka.consumer.{BaseConsumerRecord, ConsumerIterator, BaseConsumer, Black
 import kafka.javaapi.consumer.ConsumerRebalanceListener
 import kafka.metrics.KafkaMetricsGroup
 import kafka.serializer.DefaultDecoder
-import kafka.utils.{CommandLineUtils, CoreUtils, Logging}
+import kafka.utils.{CommandLineUtils, CoreUtils, FastLogging}
 import org.apache.kafka.clients.consumer
 import org.apache.kafka.clients.consumer.{OffsetAndMetadata, Consumer, ConsumerRecord, KafkaConsumer, CommitFailedException}
 import org.apache.kafka.clients.producer.internals.ErrorLoggingCallback
@@ -60,7 +60,7 @@ import scala.util.control.ControlThrowable
  *       3. Mirror Maker Setting:
  *            abort.on.send.failure=true
  */
-object MirrorMaker extends Logging with KafkaMetricsGroup {
+object MirrorMaker extends FastLogging with KafkaMetricsGroup {
 
   private var producer: MirrorMakerProducer = null
   private var mirrorMakerThreads: Seq[MirrorMakerThread] = null
@@ -390,7 +390,7 @@ object MirrorMaker extends Logging with KafkaMetricsGroup {
   }
 
   class MirrorMakerThread(mirrorMakerConsumer: MirrorMakerBaseConsumer,
-                          val threadId: Int) extends Thread with Logging with KafkaMetricsGroup {
+                          val threadId: Int) extends Thread with FastLogging with KafkaMetricsGroup {
     private val threadName = "mirrormaker-thread-" + threadId
     private val shutdownLatch: CountDownLatch = new CountDownLatch(1)
     private var lastOffsetCommitMs = System.currentTimeMillis()

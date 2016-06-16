@@ -19,10 +19,10 @@ package kafka.admin
 import kafka.admin.ConfigCommand.ConfigCommandOptions
 import org.junit.Assert._
 import org.junit.Test
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import kafka.zk.ZooKeeperTestHarness
 
-class ConfigCommandTest extends ZooKeeperTestHarness with Logging {
+class ConfigCommandTest extends ZooKeeperTestHarness with FastLogging {
   @Test
   def testArgumentParse() {
     // Should parse correctly

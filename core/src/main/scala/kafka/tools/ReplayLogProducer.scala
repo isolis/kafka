@@ -21,11 +21,11 @@ import joptsimple.OptionParser
 import java.util.concurrent.{Executors, CountDownLatch}
 import java.util.Properties
 import kafka.consumer._
-import kafka.utils.{ToolsUtils, CommandLineUtils, Logging, ZkUtils}
+import kafka.utils.{ToolsUtils, CommandLineUtils, FastLogging, ZkUtils}
 import kafka.api.OffsetRequest
 import org.apache.kafka.clients.producer.{ProducerRecord, KafkaProducer, ProducerConfig}
 
-object ReplayLogProducer extends Logging {
+object ReplayLogProducer extends FastLogging {
 
   private val GroupId: String = "replay-log-producer"
 
@@ -105,7 +105,7 @@ object ReplayLogProducer extends Logging {
     val syncOpt = parser.accepts("sync", "If set message send requests to the brokers are synchronously, one at a time as they arrive.")
 
     val options = parser.parse(args : _*)
-    
+
     CommandLineUtils.checkRequiredArgs(parser, options, brokerListOpt, inputTopicOpt)
 
     val zkConnect = options.valueOf(zkConnectOpt)
@@ -124,7 +124,7 @@ object ReplayLogProducer extends Logging {
     producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer")
   }
 
-  class ZKConsumerThread(config: Config, stream: KafkaStream[Array[Byte], Array[Byte]]) extends Thread with Logging {
+  class ZKConsumerThread(config: Config, stream: KafkaStream[Array[Byte], Array[Byte]]) extends Thread with FastLogging {
     val shutdownLatch = new CountDownLatch(1)
     val producer = new KafkaProducer[Array[Byte],Array[Byte]](config.producerProps)
 

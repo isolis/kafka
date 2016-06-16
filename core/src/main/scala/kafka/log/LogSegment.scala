@@ -46,7 +46,7 @@ class LogSegment(val log: FileMessageSet,
                  val baseOffset: Long,
                  val indexIntervalBytes: Int,
                  val rollJitterMs: Long,
-                 time: Time) extends Logging {
+                 time: Time) extends FastLogging {
 
   var created = time.milliseconds
 

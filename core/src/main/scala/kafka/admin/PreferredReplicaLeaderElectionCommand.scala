@@ -25,7 +25,7 @@ import collection._
 import org.apache.kafka.common.utils.Utils
 import org.apache.kafka.common.security.JaasUtils
 
-object PreferredReplicaLeaderElectionCommand extends Logging {
+object PreferredReplicaLeaderElectionCommand extends FastLogging {
 
   def main(args: Array[String]): Unit = {
     val parser = new OptionParser
@@ -41,9 +41,9 @@ object PreferredReplicaLeaderElectionCommand extends Logging {
       .withRequiredArg
       .describedAs("urls")
       .ofType(classOf[String])
-      
+
     if(args.length == 0)
-      CommandLineUtils.printUsageAndDie(parser, "This tool causes leadership for each partition to be transferred back to the 'preferred replica'," + 
+      CommandLineUtils.printUsageAndDie(parser, "This tool causes leadership for each partition to be transferred back to the 'preferred replica'," +
                                                 " it can be used to balance leadership among the servers.")
 
     val options = parser.parse(args : _*)
@@ -55,7 +55,7 @@ object PreferredReplicaLeaderElectionCommand extends Logging {
     var zkUtils: ZkUtils = null
     try {
       zkClient = ZkUtils.createZkClient(zkConnect, 30000, 30000)
-      zkUtils = ZkUtils(zkConnect, 
+      zkUtils = ZkUtils(zkConnect,
                         30000,
                         30000,
                         JaasUtils.isZkSecurityEnabled())
@@ -120,7 +120,7 @@ object PreferredReplicaLeaderElectionCommand extends Logging {
 }
 
 class PreferredReplicaLeaderElectionCommand(zkUtils: ZkUtils, partitions: scala.collection.Set[TopicAndPartition])
-  extends Logging {
+  extends FastLogging {
   def moveLeaderToPreferredReplica() = {
     try {
       val validPartitions = partitions.filter(p => validatePartition(zkUtils, p.topic, p.partition))

@@ -25,7 +25,7 @@ import kafka.common.{TopicAndPartition, AdminCommandFailedException}
 import org.apache.kafka.common.utils.Utils
 import org.apache.kafka.common.security.JaasUtils
 
-object ReassignPartitionsCommand extends Logging {
+object ReassignPartitionsCommand extends FastLogging {
 
   def main(args: Array[String]): Unit = {
 
@@ -225,7 +225,7 @@ object ReassignPartitionsCommand extends Logging {
 }
 
 class ReassignPartitionsCommand(zkUtils: ZkUtils, partitions: collection.Map[TopicAndPartition, collection.Seq[Int]])
-  extends Logging {
+  extends FastLogging {
   def reassignPartitions(): Boolean = {
     try {
       val validPartitions = partitions.filter(p => validatePartition(zkUtils, p._1.topic, p._1.partition))

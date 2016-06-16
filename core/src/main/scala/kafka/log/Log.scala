@@ -79,7 +79,7 @@ class Log(val dir: File,
           @volatile var config: LogConfig,
           @volatile var recoveryPoint: Long = 0L,
           scheduler: Scheduler,
-          time: Time = SystemTime) extends Logging with KafkaMetricsGroup {
+          time: Time = SystemTime) extends FastLogging with KafkaMetricsGroup {
 
   import kafka.log.Log._
 

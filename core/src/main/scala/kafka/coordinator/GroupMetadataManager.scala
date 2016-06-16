@@ -54,7 +54,7 @@ class GroupMetadataManager(val brokerId: Int,
                            val config: OffsetConfig,
                            replicaManager: ReplicaManager,
                            zkUtils: ZkUtils,
-                           time: Time) extends Logging with KafkaMetricsGroup {
+                           time: Time) extends FastLogging with KafkaMetricsGroup {
 
   /* offsets cache */
   private val offsetsCache = new Pool[GroupTopicPartition, OffsetAndMetadata]

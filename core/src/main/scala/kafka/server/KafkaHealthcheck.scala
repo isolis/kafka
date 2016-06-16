@@ -30,10 +30,10 @@ import org.apache.kafka.common.protocol.SecurityProtocol
 import org.apache.zookeeper.Watcher.Event.KeeperState
 
 /**
- * This class registers the broker in zookeeper to allow 
+ * This class registers the broker in zookeeper to allow
  * other brokers and consumers to detect failures. It uses an ephemeral znode with the path:
  *   /brokers/ids/[0...N] --> advertisedHost:advertisedPort
- *   
+ *
  * Right now our definition of health is fairly naive. If we register in zk we are healthy, otherwise
  * we are dead.
  */
@@ -41,7 +41,7 @@ class KafkaHealthcheck(brokerId: Int,
                        advertisedEndpoints: Map[SecurityProtocol, EndPoint],
                        zkUtils: ZkUtils,
                        rack: Option[String],
-                       interBrokerProtocolVersion: ApiVersion) extends Logging {
+                       interBrokerProtocolVersion: ApiVersion) extends FastLogging {
 
   private val brokerIdPath = ZkUtils.BrokerIdsPath + "/" + brokerId
   private[server] val sessionExpireListener = new SessionExpireListener

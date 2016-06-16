@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -23,7 +23,7 @@ import java.util.Properties
  /**
  * Helper functions for dealing with command line utilities
  */
-object CommandLineUtils extends Logging {
+object CommandLineUtils extends FastLogging {
 
   /**
    * Check that all the listed options are present
@@ -34,7 +34,7 @@ object CommandLineUtils extends Logging {
         printUsageAndDie(parser, "Missing required argument \"" + arg + "\"")
     }
   }
-  
+
   /**
    * Check that none of the listed options are present
    */
@@ -46,7 +46,7 @@ object CommandLineUtils extends Logging {
       }
     }
   }
-  
+
   /**
    * Print usage and exit
    */

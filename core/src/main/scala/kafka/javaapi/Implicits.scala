@@ -16,9 +16,9 @@
 */
 package kafka.javaapi
 
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 
-private[javaapi] object Implicits extends Logging {
+private[javaapi] object Implicits extends FastLogging {
 
   implicit def scalaMessageSetToJavaMessageSet(messageSet: kafka.message.ByteBufferMessageSet):
      kafka.javaapi.message.ByteBufferMessageSet = {

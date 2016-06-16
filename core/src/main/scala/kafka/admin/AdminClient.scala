@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import kafka.common.KafkaException
 import kafka.coordinator.{GroupOverview, GroupSummary, MemberSummary}
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.clients._
 import org.apache.kafka.clients.consumer.internals.{ConsumerNetworkClient, ConsumerProtocol, RequestFuture}
 import org.apache.kafka.common.config.ConfigDef.{Importance, Type}
@@ -38,7 +38,7 @@ import scala.collection.JavaConverters._
 class AdminClient(val time: Time,
                   val requestTimeoutMs: Int,
                   val client: ConsumerNetworkClient,
-                  val bootstrapBrokers: List[Node]) extends Logging {
+                  val bootstrapBrokers: List[Node]) extends FastLogging {
 
   private def send(target: Node,
                    api: ApiKeys,

@@ -18,13 +18,13 @@
 package kafka
 
 import org.apache.log4j.PropertyConfigurator
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import serializer.Encoder
 
-object TestKafkaAppender extends Logging {
-  
+object TestKafkaAppender extends FastLogging {
+
   def main(args:Array[String]) {
-    
+
     if(args.length < 1) {
       println("USAGE: " + TestKafkaAppender.getClass.getName + " log4j_config")
       System.exit(1)
@@ -39,7 +39,7 @@ object TestKafkaAppender extends Logging {
     }
 
     for(i <- 1 to 10)
-      info("test")    
+      info("test")
   }
 }
 

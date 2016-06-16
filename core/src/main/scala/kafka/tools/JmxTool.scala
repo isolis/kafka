@@ -26,9 +26,9 @@ import joptsimple.OptionParser
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.math._
-import kafka.utils.{CommandLineUtils, Logging}
+import kafka.utils.{CommandLineUtils, FastLogging}
 
-object JmxTool extends Logging {
+object JmxTool extends FastLogging {
 
   def main(args: Array[String]) {
     // Parse command line
@@ -63,7 +63,7 @@ object JmxTool extends Logging {
         .describedAs("service-url")
         .ofType(classOf[String])
         .defaultsTo("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi")
-        
+
     if(args.length == 0)
       CommandLineUtils.printUsageAndDie(parser, "Dump JMX values to standard output.")
 

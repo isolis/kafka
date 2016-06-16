@@ -17,7 +17,7 @@
 
 package kafka.consumer
 
-import kafka.utils.{IteratorTemplate, Logging, CoreUtils}
+import kafka.utils.{IteratorTemplate, FastLogging, CoreUtils}
 import java.util.concurrent.{TimeUnit, BlockingQueue}
 import kafka.serializer.Decoder
 import java.util.concurrent.atomic.AtomicReference
@@ -35,7 +35,7 @@ class ConsumerIterator[K, V](private val channel: BlockingQueue[FetchedDataChunk
                              private val keyDecoder: Decoder[K],
                              private val valueDecoder: Decoder[V],
                              val clientId: String)
-  extends IteratorTemplate[MessageAndMetadata[K, V]] with Logging {
+  extends IteratorTemplate[MessageAndMetadata[K, V]] with FastLogging {
 
   private val current: AtomicReference[Iterator[MessageAndOffset]] = new AtomicReference(null)
   private var currentTopicInfo: PartitionTopicInfo = null

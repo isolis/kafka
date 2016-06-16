@@ -18,7 +18,7 @@
 package kafka.security.auth
 
 import kafka.admin.ZkSecurityMigrator
-import kafka.utils.{Logging, ZkUtils}
+import kafka.utils.{FastLogging, ZkUtils}
 import kafka.zk.ZooKeeperTestHarness
 import org.apache.kafka.common.KafkaException
 import org.apache.kafka.common.security.JaasUtils
@@ -29,7 +29,7 @@ import scala.collection.JavaConverters._
 import scala.util.{Try, Success, Failure}
 import javax.security.auth.login.Configuration
 
-class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
+class ZkAuthorizationTest extends ZooKeeperTestHarness with FastLogging {
   val jaasFile = kafka.utils.JaasTestUtils.writeZkFile
   val authProvider = "zookeeper.authProvider.1"
 
@@ -114,7 +114,7 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
    */
   @Test
   def testZkMigration() {
-    val unsecureZkUtils = ZkUtils(zkConnect, 6000, 6000, false) 
+    val unsecureZkUtils = ZkUtils(zkConnect, 6000, 6000, false)
     try {
       testMigration(zkConnect, unsecureZkUtils, zkUtils)
     } finally {
@@ -147,7 +147,7 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
   }
 
   /**
-   * Tests that znodes cannot be deleted when the 
+   * Tests that znodes cannot be deleted when the
    * persistent paths have children.
    */
   @Test
@@ -161,7 +161,7 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
     zkUtils.zkConnection.setAcl("/", zkUtils.DefaultAcls, -1)
     deleteAllUnsecure()
   }
-  
+
   /**
    * Tests the migration tool when chroot is being used.
    */
@@ -243,10 +243,10 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
         isAclUnsecure
     )
   }
-  
+
   /**
    * Verifies that this ACL is the secure one. The
-   * values are based on the constants used in the 
+   * values are based on the constants used in the
    * ZooKeeper code base.
    */
   private def isAclSecure(acl: ACL): Boolean = {
@@ -257,7 +257,7 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
       case _ => false
     }
   }
-  
+
   /**
    * Verifies that the ACL corresponds to the unsecure one.
    */
@@ -268,7 +268,7 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
       case _ => false
     }
   }
-  
+
   /**
    * Sets up and starts the recursive execution of deletes.
    * This is used in the testDelete and testDeleteRecursive
@@ -283,14 +283,14 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
     // Clean up before leaving the test case
     unsecureZkUtils.close()
     System.clearProperty(JaasUtils.ZK_SASL_CLIENT)
-    
+
     // Fail the test if able to delete
     result match {
       case Success(v) => // All done
       case Failure(e) => fail(e.getMessage)
     }
   }
-  
+
   /**
    * Tries to delete znodes recursively
    */

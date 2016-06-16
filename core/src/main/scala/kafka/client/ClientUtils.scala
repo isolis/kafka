@@ -23,7 +23,7 @@ import kafka.cluster._
 import kafka.api._
 import kafka.producer._
 import kafka.common.KafkaException
-import kafka.utils.{CoreUtils, Logging}
+import kafka.utils.{CoreUtils, FastLogging}
 import java.util.Properties
 import util.Random
 import kafka.network.BlockingChannel
@@ -33,10 +33,11 @@ import java.io.IOException
  /**
  * Helper functions common to clients (producer, consumer, or admin)
  */
-object ClientUtils extends Logging{
+object ClientUtils extends FastLogging{
 
   /**
    * Used by the producer to send a metadata request since it has access to the ProducerConfig
+ *
    * @param topics The topics for which the metadata needs to be fetched
    * @param brokers The brokers in the cluster as configured on the producer through metadata.broker.list
    * @param producerConfig The producer's config
@@ -79,6 +80,7 @@ object ClientUtils extends Logging{
 
   /**
    * Used by a non-producer client to send a metadata request
+ *
    * @param topics The topics for which the metadata needs to be fetched
    * @param brokers The brokers in the cluster as configured on the client
    * @param clientId The client's identifier

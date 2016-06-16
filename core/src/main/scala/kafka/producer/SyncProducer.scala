@@ -40,7 +40,7 @@ object SyncProducer {
 @threadsafe
 @deprecated("This class has been deprecated and will be removed in a future release. " +
             "Please use org.apache.kafka.clients.producer.KafkaProducer instead.", "0.10.0.0")
-class SyncProducer(val config: SyncProducerConfig) extends Logging {
+class SyncProducer(val config: SyncProducerConfig) extends FastLogging {
 
   private val lock = new Object()
   @volatile private var shutdown: Boolean = false

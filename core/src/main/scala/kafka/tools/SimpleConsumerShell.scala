@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -32,7 +32,7 @@ import org.apache.kafka.common.utils.Utils
 /**
  * Command line program to dump out messages to standard out using the simple consumer
  */
-object SimpleConsumerShell extends Logging {
+object SimpleConsumerShell extends FastLogging {
 
   def UseLeaderReplica = -1
 
@@ -96,7 +96,7 @@ object SimpleConsumerShell extends Logging {
         "skip it instead of halt.")
     val noWaitAtEndOfLogOpt = parser.accepts("no-wait-at-logend",
         "If set, when the simple consumer reaches the end of the Log, it will stop, not waiting for new produced messages")
-        
+
     if(args.length == 0)
       CommandLineUtils.printUsageAndDie(parser, "A low-level tool for fetching data directly from a particular replica.")
 

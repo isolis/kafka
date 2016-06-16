@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -18,12 +18,12 @@
 package kafka.zk
 
 import javax.security.auth.login.Configuration
-import kafka.utils.{ZkUtils, Logging, CoreUtils}
+import kafka.utils.{ZkUtils, FastLogging, CoreUtils}
 import org.junit.{After, Before}
 import org.scalatest.junit.JUnitSuite
 import org.apache.kafka.common.security.JaasUtils
 
-trait ZooKeeperTestHarness extends JUnitSuite with Logging {
+trait ZooKeeperTestHarness extends JUnitSuite with FastLogging {
 
   val zkConnectionTimeout = 6000
   val zkSessionTimeout = 6000
@@ -33,7 +33,7 @@ trait ZooKeeperTestHarness extends JUnitSuite with Logging {
 
   def zkPort: Int = zookeeper.port
   def zkConnect: String = s"127.0.0.1:$zkPort"
-  
+
   @Before
   def setUp() {
     zookeeper = new EmbeddedZookeeper()

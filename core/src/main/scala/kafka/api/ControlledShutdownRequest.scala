@@ -23,10 +23,10 @@ import kafka.common.TopicAndPartition
 import kafka.api.ApiUtils._
 import kafka.network.{RequestOrResponseSend, RequestChannel}
 import kafka.network.RequestChannel.Response
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.protocol.{ApiKeys, Errors}
 
-object ControlledShutdownRequest extends Logging {
+object ControlledShutdownRequest extends FastLogging {
   val CurrentVersion = 1.shortValue
   val DefaultClientId = ""
 

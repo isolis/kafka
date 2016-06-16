@@ -22,7 +22,7 @@ import java.util.regex.Pattern
 import org.apache.kafka.common.utils.Utils
 
 import scala.collection._
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import kafka.common._
 import java.io._
 
@@ -34,7 +34,7 @@ object OffsetCheckpoint {
 /**
  * This class saves out a map of topic/partition=>offsets to a file
  */
-class OffsetCheckpoint(val file: File) extends Logging {
+class OffsetCheckpoint(val file: File) extends FastLogging {
   import OffsetCheckpoint._
   private val path = file.toPath.toAbsolutePath
   private val tempPath = Paths.get(path.toString + ".tmp")
@@ -117,5 +117,5 @@ class OffsetCheckpoint(val file: File) extends Logging {
       }
     }
   }
-  
+
 }

@@ -128,12 +128,12 @@ class ControllerContext(val zkUtils: ZkUtils,
 }
 
 
-object KafkaController extends Logging {
+object KafkaController extends FastLogging {
   val stateChangeLogger = new StateChangeLogger("state.change.logger")
   val InitialControllerEpoch = 1
   val InitialControllerEpochZkVersion = 1
 
-  case class StateChangeLogger(override val loggerName: String) extends Logging
+  case class StateChangeLogger(override val loggerName: String) extends FastLogging
 
   def parseControllerId(controllerInfoString: String): Int = {
     try {
@@ -157,7 +157,7 @@ object KafkaController extends Logging {
   }
 }
 
-class KafkaController(val config : KafkaConfig, zkUtils: ZkUtils, val brokerState: BrokerState, time: Time, metrics: Metrics, threadNamePrefix: Option[String] = None) extends Logging with KafkaMetricsGroup {
+class KafkaController(val config : KafkaConfig, zkUtils: ZkUtils, val brokerState: BrokerState, time: Time, metrics: Metrics, threadNamePrefix: Option[String] = None) extends FastLogging with KafkaMetricsGroup {
   this.logIdent = "[Controller " + config.brokerId + "]: "
   private var isRunning = true
   private val stateChangeLogger = KafkaController.stateChangeLogger
@@ -1155,7 +1155,7 @@ class KafkaController(val config : KafkaConfig, zkUtils: ZkUtils, val brokerStat
     finalLeaderIsrAndControllerEpoch
   }
 
-  class SessionExpirationListener() extends IZkStateListener with Logging {
+  class SessionExpirationListener() extends IZkStateListener with FastLogging {
     this.logIdent = "[SessionExpirationListener on " + config.brokerId + "], "
     @throws(classOf[Exception])
     def handleStateChanged(state: KeeperState) {
@@ -1246,7 +1246,7 @@ class KafkaController(val config : KafkaConfig, zkUtils: ZkUtils, val brokerStat
  * If any of the above conditions are satisfied, it logs an error and removes the partition from list of reassigned
  * partitions.
  */
-class PartitionsReassignedListener(controller: KafkaController) extends IZkDataListener with Logging {
+class PartitionsReassignedListener(controller: KafkaController) extends IZkDataListener with FastLogging {
   this.logIdent = "[PartitionsReassignedListener on " + controller.config.brokerId + "]: "
   val zkUtils = controller.controllerContext.zkUtils
   val controllerContext = controller.controllerContext
@@ -1290,7 +1290,7 @@ class PartitionsReassignedListener(controller: KafkaController) extends IZkDataL
 
 class ReassignedPartitionsIsrChangeListener(controller: KafkaController, topic: String, partition: Int,
                                             reassignedReplicas: Set[Int])
-  extends IZkDataListener with Logging {
+  extends IZkDataListener with FastLogging {
   this.logIdent = "[ReassignedPartitionsIsrChangeListener on controller " + controller.config.brokerId + "]: "
   val zkUtils = controller.controllerContext.zkUtils
   val controllerContext = controller.controllerContext
@@ -1351,7 +1351,7 @@ class ReassignedPartitionsIsrChangeListener(controller: KafkaController, topic: 
  *
  * @param controller
  */
-class IsrChangeNotificationListener(controller: KafkaController) extends IZkChildListener with Logging {
+class IsrChangeNotificationListener(controller: KafkaController) extends IZkChildListener with FastLogging {
 
   override def handleChildChange(parentPath: String, currentChildren: util.List[String]): Unit = {
     import scala.collection.JavaConverters._
@@ -1416,7 +1416,7 @@ object IsrChangeNotificationListener {
  * Starts the preferred replica leader election for the list of partitions specified under
  * /admin/preferred_replica_election -
  */
-class PreferredReplicaElectionListener(controller: KafkaController) extends IZkDataListener with Logging {
+class PreferredReplicaElectionListener(controller: KafkaController) extends IZkDataListener with FastLogging {
   this.logIdent = "[PreferredReplicaElectionListener on " + controller.config.brokerId + "]: "
   val zkUtils = controller.controllerContext.zkUtils
   val controllerContext = controller.controllerContext

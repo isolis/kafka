@@ -19,7 +19,7 @@ package kafka.controller
 import kafka.admin.AdminUtils
 import kafka.api.LeaderAndIsr
 import kafka.log.LogConfig
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import kafka.common.{LeaderElectionNotNeededException, TopicAndPartition, StateChangeFailedException, NoReplicaOnlineException}
 import kafka.server.{ConfigType, KafkaConfig}
 
@@ -47,7 +47,7 @@ trait PartitionLeaderSelector {
  * Once the leader is successfully registered in zookeeper, it updates the allLeaders cache
  */
 class OfflinePartitionLeaderSelector(controllerContext: ControllerContext, config: KafkaConfig)
-  extends PartitionLeaderSelector with Logging {
+  extends PartitionLeaderSelector with FastLogging {
   this.logIdent = "[OfflinePartitionLeaderSelector]: "
 
   def selectLeader(topicAndPartition: TopicAndPartition, currentLeaderAndIsr: LeaderAndIsr): (LeaderAndIsr, Seq[Int]) = {
@@ -100,7 +100,7 @@ class OfflinePartitionLeaderSelector(controllerContext: ControllerContext, confi
  * New isr = current isr
  * Replicas to receive LeaderAndIsr request = reassigned replicas
  */
-class ReassignedPartitionLeaderSelector(controllerContext: ControllerContext) extends PartitionLeaderSelector with Logging {
+class ReassignedPartitionLeaderSelector(controllerContext: ControllerContext) extends PartitionLeaderSelector with FastLogging {
   this.logIdent = "[ReassignedPartitionLeaderSelector]: "
 
   /**
@@ -135,7 +135,7 @@ class ReassignedPartitionLeaderSelector(controllerContext: ControllerContext) ex
  * Replicas to receive LeaderAndIsr request = assigned replicas
  */
 class PreferredReplicaPartitionLeaderSelector(controllerContext: ControllerContext) extends PartitionLeaderSelector
-with Logging {
+with FastLogging {
   this.logIdent = "[PreferredReplicaPartitionLeaderSelector]: "
 
   def selectLeader(topicAndPartition: TopicAndPartition, currentLeaderAndIsr: LeaderAndIsr): (LeaderAndIsr, Seq[Int]) = {
@@ -168,7 +168,7 @@ with Logging {
  */
 class ControlledShutdownLeaderSelector(controllerContext: ControllerContext)
         extends PartitionLeaderSelector
-        with Logging {
+        with FastLogging {
 
   this.logIdent = "[ControlledShutdownLeaderSelector]: "
 
@@ -198,7 +198,7 @@ class ControlledShutdownLeaderSelector(controllerContext: ControllerContext)
  * Essentially does nothing. Returns the current leader and ISR, and the current
  * set of replicas assigned to a given topic/partition.
  */
-class NoOpLeaderSelector(controllerContext: ControllerContext) extends PartitionLeaderSelector with Logging {
+class NoOpLeaderSelector(controllerContext: ControllerContext) extends PartitionLeaderSelector with FastLogging {
 
   this.logIdent = "[NoOpLeaderSelector]: "
 

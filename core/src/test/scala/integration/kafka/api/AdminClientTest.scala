@@ -18,7 +18,7 @@ package kafka.api
 
 import kafka.admin.AdminClient
 import kafka.server.KafkaConfig
-import kafka.utils.{TestUtils, Logging}
+import kafka.utils.{TestUtils, FastLogging}
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.TopicPartition
@@ -26,7 +26,7 @@ import org.junit.{Before, Test}
 import org.junit.Assert._
 import scala.collection.JavaConversions._
 
-class AdminClientTest extends IntegrationTestHarness with Logging {
+class AdminClientTest extends IntegrationTestHarness with FastLogging {
 
   val producerCount = 1
   val consumerCount = 2

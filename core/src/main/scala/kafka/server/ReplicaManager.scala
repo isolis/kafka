@@ -106,7 +106,7 @@ class ReplicaManager(val config: KafkaConfig,
                      scheduler: Scheduler,
                      val logManager: LogManager,
                      val isShuttingDown: AtomicBoolean,
-                     threadNamePrefix: Option[String] = None) extends Logging with KafkaMetricsGroup {
+                     threadNamePrefix: Option[String] = None) extends FastLogging with KafkaMetricsGroup {
   /* epoch of the controller that last changed the leader */
   @volatile var controllerEpoch: Int = KafkaController.InitialControllerEpoch - 1
   private val localBrokerId = config.brokerId

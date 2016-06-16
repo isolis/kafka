@@ -27,7 +27,7 @@ import kafka.api._
 import kafka.common.{BrokerEndPointNotAvailableException, Topic, TopicAndPartition}
 import kafka.controller.{KafkaController, LeaderIsrAndControllerEpoch}
 import kafka.utils.CoreUtils._
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.Node
 import org.apache.kafka.common.protocol.{Errors, SecurityProtocol}
 import org.apache.kafka.common.requests.UpdateMetadataRequest.PartitionState
@@ -37,7 +37,7 @@ import org.apache.kafka.common.requests.{MetadataResponse, UpdateMetadataRequest
  *  A cache for the state (e.g., current leader) of each partition. This cache is updated through
  *  UpdateMetadataRequest from the controller. Every broker maintains the same cache, asynchronously.
  */
-private[server] class MetadataCache(brokerId: Int) extends Logging {
+private[server] class MetadataCache(brokerId: Int) extends FastLogging {
   private val stateChangeLogger = KafkaController.stateChangeLogger
   private val cache = mutable.Map[String, mutable.Map[Int, PartitionStateInfo]]()
   private var controllerId: Option[Int] = None

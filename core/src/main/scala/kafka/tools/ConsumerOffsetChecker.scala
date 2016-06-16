@@ -33,7 +33,7 @@ import kafka.network.BlockingChannel
 import kafka.api.PartitionOffsetRequestInfo
 import org.I0Itec.zkclient.exception.ZkNoNodeException
 
-object ConsumerOffsetChecker extends Logging {
+object ConsumerOffsetChecker extends FastLogging {
 
   private val consumerMap: mutable.Map[Int, Option[SimpleConsumer]] = mutable.Map()
   private val offsetMap: mutable.Map[TopicAndPartition, Long] = mutable.Map()

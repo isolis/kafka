@@ -25,7 +25,17 @@ import scala.reflect.macros.whitebox.Context
 object MacroLogger {
   def info(c: Context)(msg: c.Expr[String]) = {
     import c.universe._
-    q"if (logger.isInfoEnabled()) logger.info(msgWithLogIdent($msg))"
+    q"if (logger.isInfoEnabled()) logger.info(msgWithLogIdentMacro($msg))"
+  }
+
+  def debug(c: Context)(msg: c.Expr[String]) = {
+    import c.universe._
+    q"if (logger.isDebugEnabled()) logger.debug(msgWithLogIdentMacro($msg))"
+  }
+
+  def trace(c: Context)(msg: c.Expr[String]) = {
+    import c.universe._
+    q"if (logger.isTraceEnabled()) logger.trace(msgWithLogIdentMacro($msg))"
   }
 }
 
@@ -41,7 +51,7 @@ trait FastLogging {
     * @param log The log method to use for logging. E.g. logger.warn
     * @param action The action to execute
     */
-  def swallow(log: (Object, Throwable) => Unit, action: => Unit) {
+  def logSwallow(log: (Object, Throwable) => Unit, action: => Unit) {
     try {
       action
     } catch {
@@ -54,10 +64,15 @@ trait FastLogging {
   // Force initialization to register Log4jControllerMBean
   private val log4jController = Log4jController
 
+  protected def msgWithLogIdentMacro(msg: String) =
+    if(logIdent == null) "Macro " + msg else "Macro " + logIdent + msg
+
   protected def msgWithLogIdent(msg: String) =
     if(logIdent == null) msg else logIdent + msg
 
-  def trace(msg: => String): Unit = {
+  def trace(msg: String): Unit = macro MacroLogger.trace
+
+  def traceOld(msg: => String): Unit = {
     if (logger.isTraceEnabled())
       logger.trace(msgWithLogIdent(msg))
   }
@@ -70,10 +85,12 @@ trait FastLogging {
       logger.trace(msgWithLogIdent(msg),e)
   }
   def swallowTrace(action: => Unit) {
-    swallow(logger.trace, action)
+    logSwallow(logger.trace, action)
   }
 
-  def debug(msg: => String): Unit = {
+  def debug(msg: String): Unit = macro MacroLogger.debug
+
+  def debugOld(msg: => String): Unit = {
     if (logger.isDebugEnabled())
       logger.debug(msgWithLogIdent(msg))
   }
@@ -86,7 +103,7 @@ trait FastLogging {
       logger.debug(msgWithLogIdent(msg),e)
   }
   def swallowDebug(action: => Unit) {
-    swallow(logger.debug, action)
+    logSwallow(logger.debug, action)
   }
 
   def info(msg: String): Unit = macro MacroLogger.info
@@ -105,7 +122,7 @@ trait FastLogging {
       logger.info(msgWithLogIdent(msg),e)
   }
   def swallowInfo(action: => Unit) {
-    swallow(logger.info, action)
+    logSwallow(logger.info, action)
   }
 
   def warn(msg: => String): Unit = {
@@ -118,7 +135,7 @@ trait FastLogging {
     logger.warn(msgWithLogIdent(msg),e)
   }
   def swallowWarn(action: => Unit) {
-    swallow(logger.warn, action)
+    logSwallow(logger.warn, action)
   }
   def swallow(action: => Unit) = swallowWarn(action)
 
@@ -132,7 +149,7 @@ trait FastLogging {
     logger.error(msgWithLogIdent(msg),e)
   }
   def swallowError(action: => Unit) {
-    swallow(logger.error, action)
+    logSwallow(logger.error, action)
   }
 
   def fatal(msg: => String): Unit = {

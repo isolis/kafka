@@ -53,7 +53,7 @@ import org.apache.kafka.common.protocol.Errors
  * 2. The tool doesn't handle out of range offsets.
  */
 
-object ReplicaVerificationTool extends Logging {
+object ReplicaVerificationTool extends FastLogging {
   val clientId= "replicaVerificationTool"
   val dateFormatString = "yyyy-MM-dd HH:mm:ss,SSS"
   val dateFormat = new SimpleDateFormat(dateFormatString)
@@ -206,7 +206,7 @@ private class ReplicaBuffer(expectedReplicasPerTopicAndPartition: Map[TopicAndPa
                             expectedNumFetchers: Int,
                             brokerMap: Map[Int, BrokerEndPoint],
                             initialOffsetTime: Long,
-                            reportInterval: Long) extends Logging {
+                            reportInterval: Long) extends FastLogging {
   private val fetchOffsetMap = new Pool[TopicAndPartition, Long]
   private val messageSetCache = new Pool[TopicAndPartition, Pool[Int, FetchResponsePartitionData]]
   private val fetcherBarrier = new AtomicReference(new CountDownLatch(expectedNumFetchers))

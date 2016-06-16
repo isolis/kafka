@@ -33,7 +33,7 @@ import scala.collection.JavaConversions._
 import scala.util.matching.Regex
 import kafka.consumer.{ConsumerConfig, ZookeeperConsumerConnector}
 
-class MetricsTest extends KafkaServerTestHarness with Logging {
+class MetricsTest extends KafkaServerTestHarness with FastLogging {
   val numNodes = 2
   val numParts = 2
   val topic = "topic1"

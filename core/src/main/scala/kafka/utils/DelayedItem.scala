@@ -20,7 +20,7 @@ package kafka.utils
 import java.util.concurrent._
 import scala.math._
 
-class DelayedItem(delayMs: Long) extends Delayed with Logging {
+class DelayedItem(delayMs: Long) extends Delayed with FastLogging {
 
   private val dueMs = SystemTime.milliseconds + delayMs
 

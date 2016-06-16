@@ -17,7 +17,7 @@
 
 package kafka.consumer
 
-import kafka.utils.{Pool, threadsafe, Logging}
+import kafka.utils.{Pool, threadsafe, FastLogging}
 import java.util.concurrent.TimeUnit
 import kafka.metrics.KafkaMetricsGroup
 import kafka.common.{ClientIdTopic, ClientIdAllTopics, ClientIdAndTopic}
@@ -35,9 +35,10 @@ class ConsumerTopicMetrics(metricId: ClientIdTopic) extends KafkaMetricsGroup {
 
 /**
  * Tracks metrics for each topic the given consumer client has consumed data from.
+ *
  * @param clientId The clientId of the given consumer client.
  */
-class ConsumerTopicStats(clientId: String) extends Logging {
+class ConsumerTopicStats(clientId: String) extends FastLogging {
   private val valueFactory = (k: ClientIdAndTopic) => new ConsumerTopicMetrics(k)
   private val stats = new Pool[ClientIdAndTopic, ConsumerTopicMetrics](Some(valueFactory))
   private val allTopicStats = new ConsumerTopicMetrics(new ClientIdAllTopics(clientId)) // to differentiate from a topic named AllTopics

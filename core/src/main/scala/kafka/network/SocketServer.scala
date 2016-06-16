@@ -48,7 +48,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
  *   Acceptor has N Processor threads that each have their own selector and read requests from sockets
  *   M Handler threads that handle requests and produce responses back to the processor threads for writing.
  */
-class SocketServer(val config: KafkaConfig, val metrics: Metrics, val time: Time) extends Logging with KafkaMetricsGroup {
+class SocketServer(val config: KafkaConfig, val metrics: Metrics, val time: Time) extends FastLogging with KafkaMetricsGroup {
 
   private val endpoints = config.listeners
   private val numProcessorThreads = config.numNetworkThreads
@@ -161,7 +161,7 @@ class SocketServer(val config: KafkaConfig, val metrics: Metrics, val time: Time
 /**
  * A base class with some helper variables and methods
  */
-private[kafka] abstract class AbstractServerThread(connectionQuotas: ConnectionQuotas) extends Runnable with Logging {
+private[kafka] abstract class AbstractServerThread(connectionQuotas: ConnectionQuotas) extends Runnable with FastLogging {
 
   private val startupLatch = new CountDownLatch(1)
   private val shutdownLatch = new CountDownLatch(1)

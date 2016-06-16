@@ -20,7 +20,7 @@ package kafka.server
 import java.util.Properties
 
 import kafka.metrics.KafkaMetricsReporter
-import kafka.utils.{VerifiableProperties, Logging}
+import kafka.utils.{VerifiableProperties, FastLogging}
 
 object KafkaServerStartable {
   def fromProps(serverProps: Properties) = {
@@ -29,7 +29,7 @@ object KafkaServerStartable {
   }
 }
 
-class KafkaServerStartable(val serverConfig: KafkaConfig) extends Logging {
+class KafkaServerStartable(val serverConfig: KafkaConfig) extends FastLogging {
   private val server = new KafkaServer(serverConfig)
 
   def startup() {
@@ -64,7 +64,7 @@ class KafkaServerStartable(val serverConfig: KafkaConfig) extends Logging {
     server.brokerState.newState(newState)
   }
 
-  def awaitShutdown() = 
+  def awaitShutdown() =
     server.awaitShutdown
 
 }

@@ -20,7 +20,7 @@ import collection._
 import collection.JavaConversions._
 import java.util.concurrent.atomic.AtomicBoolean
 import kafka.common.{TopicAndPartition, StateChangeFailedException}
-import kafka.utils.{ZkUtils, ReplicationUtils, Logging}
+import kafka.utils.{ZkUtils, ReplicationUtils, FastLogging}
 import org.I0Itec.zkclient.IZkChildListener
 import org.apache.log4j.Logger
 import kafka.controller.Callbacks._
@@ -44,7 +44,7 @@ import kafka.utils.CoreUtils._
  * 7. NonExistentReplica: If a replica is deleted successfully, it is moved to this state. Valid previous state is
  *                        ReplicaDeletionSuccessful
  */
-class ReplicaStateMachine(controller: KafkaController) extends Logging {
+class ReplicaStateMachine(controller: KafkaController) extends FastLogging {
   private val controllerContext = controller.controllerContext
   private val controllerId = controller.config.brokerId
   private val zkUtils = controllerContext.zkUtils
@@ -101,6 +101,7 @@ class ReplicaStateMachine(controller: KafkaController) extends Logging {
 
   /**
    * This API is invoked by the broker change controller callbacks and the startup API of the state machine
+ *
    * @param replicas     The list of replicas (brokers) that need to be transitioned to the target state
    * @param targetState  The state that the replicas should be moved to
    * The controller's allLeaders cache should have been updated before this
@@ -149,9 +150,8 @@ class ReplicaStateMachine(controller: KafkaController) extends Logging {
    *
    * ReplicaDeletionSuccessful -> NonExistentReplica
    * -- remove the replica from the in memory partition replica assignment cache
-
-
-   * @param partitionAndReplica The replica for which the state transition is invoked
+ *
+ * @param partitionAndReplica The replica for which the state transition is invoked
    * @param targetState The end state that the replica should be moved to
    */
   def handleStateChange(partitionAndReplica: PartitionAndReplica, targetState: ReplicaState,
@@ -348,7 +348,7 @@ class ReplicaStateMachine(controller: KafkaController) extends Logging {
   /**
    * This is the zookeeper listener that triggers all the state transitions for a replica
    */
-  class BrokerChangeListener() extends IZkChildListener with Logging {
+  class BrokerChangeListener() extends IZkChildListener with FastLogging {
     this.logIdent = "[BrokerChangeListener on Controller " + controller.config.brokerId + "]: "
     def handleChildChange(parentPath : String, currentBrokerList : java.util.List[String]) {
       info("Broker change listener fired for path %s with children %s".format(parentPath, currentBrokerList.sorted.mkString(",")))

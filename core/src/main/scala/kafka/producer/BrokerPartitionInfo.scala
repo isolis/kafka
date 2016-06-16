@@ -21,19 +21,20 @@ import org.apache.kafka.common.protocol.Errors
 import collection.mutable.HashMap
 import kafka.api.TopicMetadata
 import kafka.common.KafkaException
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import kafka.client.ClientUtils
 
 @deprecated("This class has been deprecated and will be removed in a future release.", "0.10.0.0")
 class BrokerPartitionInfo(producerConfig: ProducerConfig,
                           producerPool: ProducerPool,
                           topicPartitionInfo: HashMap[String, TopicMetadata])
-        extends Logging {
+        extends FastLogging {
   val brokerList = producerConfig.brokerList
   val brokers = ClientUtils.parseBrokerList(brokerList)
 
   /**
    * Return a sequence of (brokerId, numPartitions).
+ *
    * @param topic the topic for which this information is to be returned
    * @return a sequence of (brokerId, numPartitions). Returns a zero-length
    * sequence if no brokers are available.
@@ -76,6 +77,7 @@ class BrokerPartitionInfo(producerConfig: ProducerConfig,
 
   /**
    * It updates the cache by issuing a get topic metadata request to a random broker.
+ *
    * @param topics the topics for which the metadata is to be fetched
    */
   def updateInfo(topics: Set[String], correlationId: Int) {

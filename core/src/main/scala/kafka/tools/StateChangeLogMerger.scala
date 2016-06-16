@@ -22,7 +22,7 @@ import scala.util.matching.Regex
 import collection.mutable
 import java.util.Date
 import java.text.SimpleDateFormat
-import kafka.utils.{CoreUtils, Logging, CommandLineUtils}
+import kafka.utils.{CoreUtils, FastLogging, CommandLineUtils}
 import kafka.common.Topic
 import java.io.{BufferedOutputStream, OutputStream}
 
@@ -41,7 +41,7 @@ import java.io.{BufferedOutputStream, OutputStream}
  * 4. End time until when the logs should be merged
  */
 
-object StateChangeLogMerger extends Logging {
+object StateChangeLogMerger extends FastLogging {
 
   val dateFormatString = "yyyy-MM-dd HH:mm:ss,SSS"
   val topicPartitionRegex = new Regex("\\[(" + Topic.legalChars + "+),( )*([0-9]+)\\]")
@@ -83,7 +83,7 @@ object StateChangeLogMerger extends Logging {
                               .describedAs("end timestamp in the format " + dateFormat)
                               .ofType(classOf[String])
                               .defaultsTo("9999-12-31 23:59:59,999")
-                              
+
     if(args.length == 0)
       CommandLineUtils.printUsageAndDie(parser, "A tool for merging the log files from several brokers to reconnstruct a unified history of what happened.")
 
@@ -157,6 +157,7 @@ object StateChangeLogMerger extends Logging {
   /**
    * Returns the next line that matches the specified topic/partitions from the file that has the earliest date
    * from the specified date range.
+ *
    * @param itr Line iterator of a file
    * @return (line from a file, line iterator for the same file)
    */

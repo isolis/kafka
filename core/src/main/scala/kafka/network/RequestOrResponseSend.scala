@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 import java.nio.channels.GatheringByteChannel
 
 import kafka.api.RequestOrResponse
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.network.NetworkSend
 
 object RequestOrResponseSend {
@@ -38,7 +38,7 @@ object RequestOrResponseSend {
   }
 }
 
-class RequestOrResponseSend(val dest: String, val buffer: ByteBuffer) extends NetworkSend(dest, buffer) with Logging {
+class RequestOrResponseSend(val dest: String, val buffer: ByteBuffer) extends NetworkSend(dest, buffer) with FastLogging {
 
   def this(dest: String, request: RequestOrResponse) {
     this(dest, RequestOrResponseSend.serialize(request))

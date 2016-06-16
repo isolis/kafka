@@ -47,7 +47,7 @@ class FileMessageSet private[kafka](@volatile var file: File,
                                     private[log] val channel: FileChannel,
                                     private[log] val start: Int,
                                     private[log] val end: Int,
-                                    isSlice: Boolean) extends MessageSet with Logging {
+                                    isSlice: Boolean) extends MessageSet with FastLogging {
 
   /* the size of the message set in bytes */
   private val _size =

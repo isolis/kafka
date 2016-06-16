@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -36,7 +36,7 @@ class SimpleConsumer(val host: String,
                      val port: Int,
                      val soTimeout: Int,
                      val bufferSize: Int,
-                     val clientId: String) extends Logging {
+                     val clientId: String) extends FastLogging {
 
   ConsumerConfig.validateClientId(clientId)
   private val lock = new Object()
@@ -76,7 +76,7 @@ class SimpleConsumer(val host: String,
       isClosed = true
     }
   }
-  
+
   private def sendRequest(request: RequestOrResponse): NetworkReceive = {
     lock synchronized {
       var response: NetworkReceive = null

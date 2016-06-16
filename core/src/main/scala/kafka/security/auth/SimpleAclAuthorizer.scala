@@ -67,7 +67,7 @@ object SimpleAclAuthorizer {
   private case class VersionedAcls(acls: Set[Acl], zkVersion: Int)
 }
 
-class SimpleAclAuthorizer extends Authorizer with Logging {
+class SimpleAclAuthorizer extends Authorizer with FastLogging {
   private val authorizerLogger = Logger.getLogger("kafka.authorizer.logger")
   private var superUsers = Set.empty[KafkaPrincipal]
   private var shouldAllowEveryoneIfNoAclIsFound = false

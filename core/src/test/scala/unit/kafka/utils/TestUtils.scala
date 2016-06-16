@@ -58,7 +58,7 @@ import scala.collection.JavaConverters._
 /**
  * Utility functions to help with testing
  */
-object TestUtils extends Logging {
+object TestUtils extends FastLogging {
 
   val IoTmpDir = System.getProperty("java.io.tmpdir")
 
@@ -959,7 +959,7 @@ object TestUtils extends Logging {
     )
 
     val values = (0 until numMessages).map(x => s"test-$x")
-    
+
     val futures = values.map { value =>
       producer.send(new ProducerRecord(topic, null, null, value.getBytes))
     }

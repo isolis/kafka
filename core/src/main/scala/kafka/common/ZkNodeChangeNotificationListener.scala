@@ -18,7 +18,7 @@ package kafka.common
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-import kafka.utils.{Time, SystemTime, ZkUtils, Logging}
+import kafka.utils.{Time, SystemTime, ZkUtils, FastLogging}
 import org.apache.zookeeper.Watcher.Event.KeeperState
 import org.I0Itec.zkclient.exception.ZkInterruptedException
 import org.I0Itec.zkclient.{IZkStateListener, IZkChildListener}
@@ -41,6 +41,7 @@ trait NotificationHandler {
  * The caller/user of this class should ensure that they use zkClient.subscribeStateChanges and call processAllNotifications
  * method of this class from ZkStateChangeListener's handleNewSession() method. This is necessary to ensure that if zk session
  * is terminated and reestablished any missed notification will be processed immediately.
+ *
  * @param zkUtils
  * @param seqNodeRoot
  * @param seqNodePrefix
@@ -53,7 +54,7 @@ class ZkNodeChangeNotificationListener(private val zkUtils: ZkUtils,
                                        private val seqNodePrefix: String,
                                        private val notificationHandler: NotificationHandler,
                                        private val changeExpirationMs: Long = 15 * 60 * 1000,
-                                       private val time: Time = SystemTime) extends Logging {
+                                       private val time: Time = SystemTime) extends FastLogging {
   private var lastExecutedChange = -1L
   private val isClosed = new AtomicBoolean(false)
 

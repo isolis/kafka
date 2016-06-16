@@ -16,11 +16,11 @@
  */
 package kafka.admin
 
-import kafka.utils.{Logging, TestUtils}
+import kafka.utils.{FastLogging, TestUtils}
 import kafka.zk.ZooKeeperTestHarness
 import org.junit.Test
 
-class ReassignPartitionsCommandTest extends ZooKeeperTestHarness with Logging with RackAwareTest {
+class ReassignPartitionsCommandTest extends ZooKeeperTestHarness with FastLogging with RackAwareTest {
 
   @Test
   def testRackAwareReassign() {

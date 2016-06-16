@@ -19,7 +19,7 @@ package kafka.consumer
 
 import org.I0Itec.zkclient.ZkClient
 import kafka.common.TopicAndPartition
-import kafka.utils.{Pool, CoreUtils, ZkUtils, Logging}
+import kafka.utils.{Pool, CoreUtils, ZkUtils, FastLogging}
 
 import scala.collection.mutable
 
@@ -27,6 +27,7 @@ trait PartitionAssignor {
 
   /**
    * Assigns partitions to consumer instances in a group.
+ *
    * @return An assignment map of partition to this consumer group. This includes assignments for threads that belong
    *         to the same consumer group.
    */
@@ -68,7 +69,7 @@ class AssignmentContext(group: String, val consumerId: String, excludeInternalTo
  * b) The set of subscribed topics is identical for every consumer instance within the group.
  */
 
-class RoundRobinAssignor() extends PartitionAssignor with Logging {
+class RoundRobinAssignor() extends PartitionAssignor with FastLogging {
 
   def assign(ctx: AssignmentContext) = {
 
@@ -128,7 +129,7 @@ class RoundRobinAssignor() extends PartitionAssignor with Logging {
  * will get at least one partition and the first consumer thread will get one extra partition. So the assignment will be:
  * p0 -> C1-0, p1 -> C1-0, p2 -> C1-1, p3 -> C2-0, p4 -> C2-1
  */
-class RangeAssignor() extends PartitionAssignor with Logging {
+class RangeAssignor() extends PartitionAssignor with FastLogging {
 
   def assign(ctx: AssignmentContext) = {
     val valueFactory = (topic: String) => new mutable.HashMap[TopicAndPartition, ConsumerThreadId]

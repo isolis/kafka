@@ -124,7 +124,7 @@ object ZkUtils {
 
 class ZkUtils(val zkClient: ZkClient,
               val zkConnection: ZkConnection,
-              val isSecure: Boolean) extends Logging {
+              val isSecure: Boolean) extends FastLogging {
   // These are persistent ZK paths that should exist on kafka broker startup.
   val persistentZkPaths = Seq(ConsumersPath,
                               BrokerIdsPath,
@@ -953,7 +953,7 @@ object ZkPath {
 class ZKCheckedEphemeral(path: String,
                          data: String,
                          zkHandle: ZooKeeper,
-                         isSecure: Boolean) extends Logging {
+                         isSecure: Boolean) extends FastLogging {
   private val createCallback = new CreateCallback
   private val getDataCallback = new GetDataCallback
   val latch: CountDownLatch = new CountDownLatch(1)

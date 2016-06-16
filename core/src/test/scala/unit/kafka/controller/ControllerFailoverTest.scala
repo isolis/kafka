@@ -34,7 +34,7 @@ import org.junit.{After, Before, Test}
 import scala.collection.mutable
 
 
-class ControllerFailoverTest extends KafkaServerTestHarness with Logging {
+class ControllerFailoverTest extends KafkaServerTestHarness with FastLogging {
   val log = Logger.getLogger(classOf[ControllerFailoverTest])
   val numNodes = 2
   val numParts = 1
@@ -84,7 +84,7 @@ class ControllerFailoverTest extends KafkaServerTestHarness with Logging {
     }
     // Replace channel manager with our mock manager
     controller.kafkaController.controllerContext.controllerChannelManager.shutdown()
-    val channelManager = new MockChannelManager(controller.kafkaController.controllerContext, 
+    val channelManager = new MockChannelManager(controller.kafkaController.controllerContext,
                                                   controller.kafkaController.config, metrics)
     channelManager.startup()
     controller.kafkaController.controllerContext.controllerChannelManager = channelManager

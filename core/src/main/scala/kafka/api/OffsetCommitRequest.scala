@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -23,12 +23,12 @@ import kafka.api.ApiUtils._
 import kafka.common.{OffsetAndMetadata, TopicAndPartition}
 import kafka.network.{RequestOrResponseSend, RequestChannel}
 import kafka.network.RequestChannel.Response
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.protocol.{ApiKeys, Errors}
 
 import scala.collection._
 
-object OffsetCommitRequest extends Logging {
+object OffsetCommitRequest extends FastLogging {
   val CurrentVersion: Short = 2
   val DefaultClientId = ""
 
@@ -41,7 +41,7 @@ object OffsetCommitRequest extends Logging {
     val correlationId = buffer.getInt
     val clientId = readShortString(buffer)
 
-    // Read the OffsetRequest 
+    // Read the OffsetRequest
     val groupId = readShortString(buffer)
 
     // version 1 and 2 specific fields

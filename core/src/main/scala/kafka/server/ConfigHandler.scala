@@ -21,7 +21,7 @@ import java.util.Properties
 
 import kafka.api.ApiVersion
 import kafka.log.{LogConfig, LogManager}
-import kafka.utils.Logging
+import kafka.utils.FastLogging
 import org.apache.kafka.common.metrics.Quota
 import org.apache.kafka.common.protocol.ApiKeys
 
@@ -39,7 +39,7 @@ trait ConfigHandler {
  * The TopicConfigHandler will process topic config changes in ZK.
  * The callback provides the topic name and the full properties set read from ZK
  */
-class TopicConfigHandler(private val logManager: LogManager, kafkaConfig: KafkaConfig) extends ConfigHandler with Logging {
+class TopicConfigHandler(private val logManager: LogManager, kafkaConfig: KafkaConfig) extends ConfigHandler with FastLogging {
 
   def processConfigChanges(topic: String, topicConfig: Properties) {
     // Validate the compatibility of message format version.

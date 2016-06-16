@@ -16,14 +16,14 @@ import kafka.admin.ReassignPartitionsCommand
 import kafka.server.{KafkaConfig, KafkaServer}
 import kafka.utils.TestUtils._
 import kafka.utils.ZkUtils._
-import kafka.utils.{CoreUtils, Logging}
+import kafka.utils.{CoreUtils, FastLogging}
 import kafka.zk.ZooKeeperTestHarness
 import org.junit.{After, Before, Test}
 import org.junit.Assert.assertEquals
 import scala.collection.Seq
 
 
-class ReassignPartitionsClusterTest extends ZooKeeperTestHarness with Logging {
+class ReassignPartitionsClusterTest extends ZooKeeperTestHarness with FastLogging {
   val partitionId = 0
   var servers: Seq[KafkaServer] = null
   val topicName = "my-topic"

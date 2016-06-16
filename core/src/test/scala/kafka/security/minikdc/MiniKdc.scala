@@ -25,7 +25,7 @@ import java.nio.file.Files
 import java.text.MessageFormat
 import java.util.{Locale, Properties, UUID}
 
-import kafka.utils.{CoreUtils, Logging}
+import kafka.utils.{CoreUtils, FastLogging}
 
 import scala.collection.JavaConverters._
 import org.apache.commons.io.IOUtils
@@ -86,7 +86,7 @@ import org.apache.kafka.common.utils.Utils
   *                MiniKdc.
   * @throws Exception thrown if the MiniKdc could not be created.
   */
-class MiniKdc(config: Properties, workDir: File) extends Logging {
+class MiniKdc(config: Properties, workDir: File) extends FastLogging {
 
   if (!config.keySet.containsAll(MiniKdc.RequiredProperties.asJava)) {
     val missingProperties = MiniKdc.RequiredProperties.filterNot(config.keySet.asScala)
