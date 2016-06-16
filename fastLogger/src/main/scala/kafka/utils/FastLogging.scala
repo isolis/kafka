@@ -19,7 +19,18 @@ package kafka.utils
 
 import org.apache.log4j.Logger
 
-trait Logging {
+import scala.language.experimental.macros
+import scala.reflect.macros.Context
+
+  object MacroLogger {
+    def info(c: Context)(msg: c.Expr[String]): c.Expr[Unit] = {
+      import c.universe._
+      q"if (Logger.isInfoEnabled()) Logger.info(msgWithLogIdent($msg))"
+      //Expr(If(Apply(Select(Select(Ident(TermName("$anon")), TermName("logger")), TermName("isInfoEnabled")), List()), Apply(Select(Select(Ident(TermName("$anon")), TermName("logger")), TermName("info")), List(Select(Ident(TermName("$anon")), TermName("msg")))), Literal(Constant(()))))
+    }
+  }
+
+trait FastLogging {
   val loggerName = this.getClass.getName
   lazy val logger = Logger.getLogger(loggerName)
 
@@ -44,7 +55,7 @@ trait Logging {
       logger.trace(msgWithLogIdent(msg),e)
   }
   def swallowTrace(action: => Unit) {
-    CoreUtils.swallow(logger.trace, action)
+    CoreUtilsFastLogger.swallow(logger.trace, action)
   }
 
   def debug(msg: => String): Unit = {
@@ -60,10 +71,12 @@ trait Logging {
       logger.debug(msgWithLogIdent(msg),e)
   }
   def swallowDebug(action: => Unit) {
-    CoreUtils.swallow(logger.debug, action)
+    CoreUtilsFastLogger.swallow(logger.debug, action)
   }
 
-  def info(msg: => String): Unit = {
+  def info(msg: String): Unit = macro MacroLogger.info
+
+  def infoOld(msg: => String): Unit = {
     if (logger.isInfoEnabled())
       logger.info(msgWithLogIdent(msg))
   }
@@ -77,7 +90,7 @@ trait Logging {
       logger.info(msgWithLogIdent(msg),e)
   }
   def swallowInfo(action: => Unit) {
-    CoreUtils.swallow(logger.info, action)
+    CoreUtilsFastLogger.swallow(logger.info, action)
   }
 
   def warn(msg: => String): Unit = {
@@ -90,7 +103,7 @@ trait Logging {
     logger.warn(msgWithLogIdent(msg),e)
   }
   def swallowWarn(action: => Unit) {
-    CoreUtils.swallow(logger.warn, action)
+    CoreUtilsFastLogger.swallow(logger.warn, action)
   }
   def swallow(action: => Unit) = swallowWarn(action)
 
@@ -104,7 +117,7 @@ trait Logging {
     logger.error(msgWithLogIdent(msg),e)
   }
   def swallowError(action: => Unit) {
-    CoreUtils.swallow(logger.error, action)
+    CoreUtilsFastLogger.swallow(logger.error, action)
   }
 
   def fatal(msg: => String): Unit = {
