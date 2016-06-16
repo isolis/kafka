@@ -378,6 +378,7 @@ project(':core') {
   archivesBaseName = "kafka_${versions.baseScala}"
 
   dependencies {
+    compile group: 'org.scala-lang', name: 'scala-reflect', version: '2.10.6'
     compile project(':clients')
     compile libs.joptSimple
     compile libs.metrics
