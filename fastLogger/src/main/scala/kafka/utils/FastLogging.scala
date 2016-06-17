@@ -42,7 +42,7 @@ object MacroLogger {
 
 trait FastLogging {
   val loggerName = this.getClass.getName
-  val logger = Logger.getLogger(loggerName)
+  lazy val logger = Logger.getLogger(loggerName)
 
   protected var logIdent: String = null
 
