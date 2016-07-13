@@ -46,8 +46,8 @@ object TopicCommand extends Logging {
 
     // should have exactly one action
     val actions = Seq(opts.createOpt, opts.listOpt, opts.alterOpt, opts.describeOpt, opts.deleteOpt).count(opts.options.has _)
-    if(actions != 1)
-      CommandLineUtils.printUsageAndDie(opts.parser, "Command must include exactly one action: --list, --describe, --create, --alter or --delete")
+    if((actions != 1) && !(opts.options.hasArgument(opts.mirrorOpt)))
+      CommandLineUtils.printUsageAndDie(opts.parser, "Command must include exactly one action: --list, --describe, --create, --alter, --delete or --mirror")
 
     opts.checkArgs()
 
@@ -67,6 +67,8 @@ object TopicCommand extends Logging {
         describeTopic(zkUtils, opts)
       else if(opts.options.has(opts.deleteOpt))
         deleteTopic(zkUtils, opts)
+      else if(opts.options.has(opts.mirrorOpt))
+        mirrorTopics(zkUtils, opts)
     } catch {
       case e: Throwable =>
         println("Error while executing topic command : " + e.getMessage)
@@ -87,6 +89,39 @@ object TopicCommand extends Logging {
       allTopics.filter(topicsFilter.isTopicAllowed(_, excludeInternalTopics = false))
     } else
       allTopics
+  }
+
+  private def mirrorTopics(zkUtils: ZkUtils, opts: TopicCommandOptions) {
+    val topics = getTopics(zkUtils, opts)
+
+    val zkUtilsTarget = ZkUtils(opts.options.valueOf(opts.mirrorOpt),
+                          30000,
+                          30000,
+                          JaasUtils.isZkSecurityEnabled())
+
+
+    for (topic <- topics) {
+      val sourcePartitionMap = zkUtils.getPartitionAssignmentForTopics(List(topic))
+      val sourceNumPartitions = sourcePartitionMap(topic).size
+      val sourceReplicationFactor = sourcePartitionMap(topic).head._2.size
+      println("Source: Topic:%s\tPartitionCount:%d\tReplicationFactor:%d" .format(topic, sourceNumPartitions, sourceReplicationFactor ))
+
+      val targetTopics = zkUtilsTarget.getAllTopics()
+      if(targetTopics.contains(topic)) {
+        println("We already have " + topic + " at Target")
+      } else {
+        println("Creating topic " + topic)
+        val config = parseTopicConfigsToBeAdded(opts)
+        AdminUtils.createTopic(zkUtilsTarget, topic, sourceNumPartitions, sourceReplicationFactor, config, RackAwareMode.Enforced)
+      }
+    }
+
+    println("===========================       ")
+    println("SOURCE CLUSTER")
+    describeTopic(zkUtils,opts)
+    println("===========================       ")
+    println("TARGET CLUSTER")
+    describeTopic(zkUtilsTarget,opts)
   }
 
   def createTopic(zkUtils: ZkUtils, opts: TopicCommandOptions) {
@@ -330,14 +365,19 @@ object TopicCommand extends Logging {
 
     val forceOpt = parser.accepts("force", "Suppress console prompts")
 
+    val mirrorOpt = parser.accepts("mirror","Mirror topic settings to this target.")
+      .withRequiredArg()
+      .describedAs("urls")
+      .ofType(classOf[String])
+
     val options = parser.parse(args : _*)
 
-    val allTopicLevelOpts: Set[OptionSpec[_]] = Set(alterOpt, createOpt, describeOpt, listOpt, deleteOpt)
+    val allTopicLevelOpts: Set[OptionSpec[_]] = Set(alterOpt, createOpt, describeOpt, listOpt, deleteOpt, mirrorOpt)
 
     def checkArgs() {
       // check required args
       CommandLineUtils.checkRequiredArgs(parser, options, zkConnectOpt)
-      if (!options.has(listOpt) && !options.has(describeOpt))
+      if (!options.has(listOpt) && !options.has(describeOpt) && !options.has(mirrorOpt))
         CommandLineUtils.checkRequiredArgs(parser, options, topicOpt)
 
       // check invalid args
@@ -386,7 +426,7 @@ object TopicCommand extends Logging {
       "*****************************************************************************************************\n" +
       "*** WARNING: you are creating a topic where the max.message.bytes is greater than the broker's    ***\n" +
       "*** default max.message.bytes. This operation is potentially dangerous. Consumers will get        ***\n" +
-      s"*** failures if their fetch.message.max.bytes (old consumer) or ${NewConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG}         ***\n"+ 
+      s"*** failures if their fetch.message.max.bytes (old consumer) or ${NewConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG}         ***\n"+
       "*** (new consumer) < the value you are using.                                                     ***\n" +
       "*****************************************************************************************************\n" +
       s"- value set here: $maxMessageBytes\n" +
